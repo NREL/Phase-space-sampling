@@ -1,0 +1,62 @@
+! ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ !
+! ~~~~ Normalizing flow training
+! ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ !
+
+# Number of repetitions for the probability map estimation (keep at 2)
+num_flow_iter :			2
+# Number of epochs for each normalizing flow training
+nEpochs :			30 30
+# Batch size for normalizing flow training
+batch_size_train :		2048 2048
+# Subset of data on which training is done
+nWorkingData : 			4e5 
+# Subset of data used to adjust the sampling probability to the desired number of samples
+nWorkingDataAdjustment : 	1e6
+# Learning rate during normalizing flow training
+learning_rate : 		2e-4 2e-4
+
+! ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ !
+! ~~~~ Normalzing flow evaluation
+! ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ !
+
+# Batch size for evaluation of normalizing flows
+batch_size_eval :		2.5e3
+
+! ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ !
+! ~~~~ Reproducibility
+! ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ !
+
+seed :				42
+
+! ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ !
+! ~~~~ Normalizing flow architecture
+! ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ !
+
+nCouplingLayer :		 4  4  
+num_bins : 			 8  8
+hidden_features :		16 16 
+num_blocks :			 4  4 
+
+
+! ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ !
+! ~~~~ Data
+! ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ !
+
+#dataFile :			data/combustion2DToDownsampleSmall.npy
+dataFile :			/lustre/eaglefs/projects/pace/nickdata/level1data_shuffled.npy
+num_index_to_keep :		11
+preShuffled :			True
+scalerFile :			scaler.npz
+
+! ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ !
+! ~~~~ Downsampling
+! ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ !
+
+# List of desired number of samples
+nSamples : 			1e3 1e4 1e5 2e5
+# Compute criterion (expensive for large number of downsampled data)
+computeDistanceCriterion : 	True
+# Prefix of the NPZ file containing the downsampled data
+prefixDownsampledData : 	downSampledData 
+
+
