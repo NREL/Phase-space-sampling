@@ -101,7 +101,24 @@ The folder `data-efficientML` is NOT necessary for using the phase-space samplin
 
 ## Documentation
 
-Uniform-in-phase space data selection with iterative normalizing flows, Malik Hassanaly, Bruce A. Perry, Michael E. Mueller, Shashank Yellapantula, Under review.
+## Reference
+
+[Preprint version (open access)](https://arxiv.org/pdf/2112.15446.pdf)
+
+
+```
+
+@article{hassanaly2022UIPS,
+  title={Uniform-in-Phase-Space Data Selection with Iterative Normalizing Flows},
+  author={Hassanaly, Malik and Mueller, Michael E. and Yellapantula, Shashank},
+  journal={\textit{Under review}},
+  pages={},
+  volume={},
+  year={2022},
+  publisher={}
+}
+
+```
 
 Overview presentation in `documentation/methodOverview.pptx`
 
