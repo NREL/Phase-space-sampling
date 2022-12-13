@@ -12,7 +12,7 @@ import myparser
 
 inpt = myparser.parseInputFile()
 
-nIter = int(inpt['num_flow_iter'])
+nIter = int(inpt['num_pdf_iter'])
 
 # Folder where figures are saved
 figureFolder = 'Figures'

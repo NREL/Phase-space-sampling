@@ -22,6 +22,8 @@ import parallel as par
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 inpt = myparser.parseInputFile()
+use_normalizing_flow = (inpt['pdf_method'].lower() == 'normalizingflow')
+use_bins = (inpt['pdf_method'].lower() == 'bins')
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # ~~~~ Parameters to save
@@ -80,42 +82,53 @@ if par.irank==par.iroot and computeCriterion:
         par.printRoot("\t nSample %d mean dist = %.4f, std dist = %.4f" %(nSample,mean,std))
        
 # Prepare arrays used for sanity checks
-meanCriterion = np.zeros((int(inpt['num_flow_iter']),len(nSamples)))
-stdCriterion = np.zeros((int(inpt['num_flow_iter']),len(nSamples)))
-flow_nll_loss = np.zeros(int(inpt['num_flow_iter']))
+meanCriterion = np.zeros((int(inpt['num_pdf_iter']),len(nSamples)))
+stdCriterion = np.zeros((int(inpt['num_pdf_iter']),len(nSamples)))
+flow_nll_loss = np.zeros(int(inpt['num_pdf_iter']))
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # ~~~~ Downsample
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-data_flow = working_data
+data_for_pdf_est = working_data
 
-for flow_iter in range(int(inpt['num_flow_iter'])):
+for pdf_iter in range(int(inpt['num_pdf_iter'])):
 
-    # Create the normalizing flow 
-    flow = sampler.createFlow(dim,flow_iter,inpt)
-    #flow = flow.to(device) 
-    n_params = utils.get_num_parameters(flow)
-    par.printRoot('There are {} trainable parameters in this model.'.format(n_params))
-    
-    # Train (happens on 1 proc)
-    flow_nll_loss[flow_iter] = sampler.trainFlow(data_flow,flow,flow_iter,inpt)
-    sampler.checkLoss(flow_iter,flow_nll_loss)
+    if use_normalizing_flow:
+        # Create the normalizing flow 
+        flow = sampler.createFlow(dim,pdf_iter,inpt)
+        #flow = flow.to(device) 
+        n_params = utils.get_num_parameters(flow)
+        par.printRoot('There are {} trainable parameters in this model.'.format(n_params))
+        
+        # Train (happens on 1 proc)
+        flow_nll_loss[pdf_iter] = sampler.trainFlow(data_for_pdf_est,flow,pdf_iter,inpt)
+        sampler.checkLoss(pdf_iter,flow_nll_loss)
    
-    # Evaluate probability: This is the expensive step (happens on multi processors)
-    log_density_np_ = sampler.evalLogProb(flow,data_to_downsample_, nFullData, flow_iter, inpt)
+        # Evaluate probability: This is the expensive step (happens on multi processors)
+        log_density_np_ = sampler.evalLogProbNF(flow,data_to_downsample_, nFullData, pdf_iter, inpt)
+
+    if use_bins:
+        bin_pdfH, bin_pdfEdges = sampler.trainBinPDF(data_for_pdf_est, pdf_iter, inpt)
+        # Evaluate probability: This is the expensive step (happens on multi processors)
+        log_density_np_ = sampler.evalLogProbBIN(data_to_downsample_, nFullData, pdf_iter, inpt)
+
     if use_serial_adjustment:
         log_density_np_for_adjust = par.gatherNelementsInArray(log_density_np_,nWorkingDataAdjustment)
     else:
         log_density_np_for_adjust = None
 
     # Correct probability estimate
-    if flow_iter>0:
+    if pdf_iter > 0:
         log_density_np_ = log_density_np_ - log_samplingProb_
-        log_density_np_for_adjust = par.gatherNelementsInArray(log_density_np_,nWorkingDataAdjustment)
+        if use_serial_adjustment:
+            log_density_np_for_adjust = par.gatherNelementsInArray(log_density_np_,nWorkingDataAdjustment)
+        else:
+            log_density_np_for_adjust = None
         
+       
 
-    par.printRoot('TRAIN ITER '+str(flow_iter))
+    par.printRoot('TRAIN ITER '+str(pdf_iter))
 
     for inSample, nSample in enumerate(nSamples):
         # Downsample
@@ -126,28 +139,28 @@ for flow_iter in range(int(inpt['num_flow_iter'])):
                                                                                 inpt) 
 
         # Plot
-        #cornerPlotScatter(downSampledData,title='downSampled npts='+str(nSample)+', iter='+str(flow_iter))
+        #cornerPlotScatter(downSampledData,title='downSampled npts='+str(nSample)+', iter='+str(pdf_iter))
         # Get criterion
         if computeCriterion and par.irank==par.iroot:
             mean, std = sampler.computeDistanceToClosestNeighbor(sampler.rescaleData(downSampledData,inpt))
-            meanCriterion[flow_iter,inSample] = mean
-            stdCriterion[flow_iter,inSample] = std
+            meanCriterion[pdf_iter,inSample] = mean
+            stdCriterion[pdf_iter,inSample] = std
             par.printRoot("\t nSample %d mean dist = %.4f, std dist = %.4f" %(nSample,mean,std))
 
-        if flow_iter == int(inpt['num_flow_iter'])-1:
-            # Last flow iter : Root proc saves downsampled data, and checks the outcome
+        if pdf_iter == int(inpt['num_pdf_iter'])-1:
+            # Last pdf iter : Root proc saves downsampled data, and checks the outcome
             if par.irank==par.iroot:
                  np.savez(inpt['prefixDownsampledData']+'_'+str(nSample)+'.npz',data=downSampledData,indices=downSampledIndices)
                  sampler.checkProcedure(meanCriterion[:,inSample],nSample,randomCriterion[inSample])
  
-    if not (flow_iter == int(inpt['num_flow_iter'])-1):
+    if not (pdf_iter == int(inpt['num_pdf_iter'])-1):
         # Prepare data for the next training iteration
         downSampledData, _, samplingProb_, log_samplingProb_ = sampler.downSample(data_to_downsample_,
                                                                                   log_density_np_,
                                                                                   log_density_np_for_adjust,
                                                                                   nWorkingData,nFullData,
                                                                                   inpt)
-        data_flow = downSampledData
+        data_for_pdf_est = downSampledData
    
  
 #if par.irank==par.iroot:

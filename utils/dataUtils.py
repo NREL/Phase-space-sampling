@@ -4,19 +4,20 @@ import sys
 #from memory_profiler import profile
 
 #@profile
-def checkData(shape, nWorkingData,nWorkingDataAdjustment):
+def checkData(shape, N, d, nWorkingData,nWorkingDataAdjustment, useNF):
     if not len(shape)==2:
         par.printAll('Expected 2 dimensions for the data, first is the number of samples, second is the dimension')
         par.comm.Abort()
     else:
-        par.printRoot('Dataset has ' + str(shape[0]) + ' samples of dimension ' + str(shape[1]) )
+        par.printRoot('Dataset has ' + str(N) + ' samples of dimension ' + str(d) )
 
-    # Check that sizes make sense
-    if shape[0]<nWorkingData*10:
-        par.printRoot('WARNING: Only ' + str(shape[0]) + ' samples, this may not work')
-    if shape[0]<max(nWorkingData,nWorkingDataAdjustment):
-        par.printAll('ERROR: At least ' + str(max(nWorkingData,nWorkingDataAdjustment)) +' samples required')
-        par.comm.Abort()
+    if useNF:
+        # Check that sizes make sense
+        if N < nWorkingData * 10:
+            par.printRoot('WARNING: Only ' + str(N) + ' samples, this may not work')
+        if N < max(nWorkingData, nWorkingDataAdjustment):
+            par.printAll('ERROR: At least ' + str(max(nWorkingData,nWorkingDataAdjustment)) +' samples required')
+            par.comm.Abort()
 
     return
 
@@ -30,14 +31,24 @@ def prepareData(inpt):
     nWorkingData = 		int(float(inpt['nWorkingData']))
     nWorkingDataAdjustment = 	int(float(inpt['nWorkingDataAdjustment']))
 
+    # Reduce Data
+    try:
+        nDimReduced = int(float(inpt['nDimReduced']))
+    except:
+        nDimReduced = -1  
+
     # Load the dataset but don't read it just yet
     dataset = np.load(dataFile,mmap_mode='r')
 
     # Check that dataset shape make sense
     nFullData = dataset.shape[0]
-    nDim = dataset.shape[1]
-    if par.irank==par.iroot: 
-        checkData(dataset.shape,nWorkingData,nWorkingDataAdjustment)
+    if nDimReduced>0: 
+        nDim = min(dataset.shape[1],nDimReduced)
+    else:
+        nDim = dataset.shape[1]
+    if par.irank==par.iroot:
+        useNF = (inpt['pdf_method'].lower() == 'normalizingflow') 
+        checkData(dataset.shape, nFullData, nDim, nWorkingData, nWorkingDataAdjustment, useNF)
     
     # Distribute dataset
     if par.irank==par.iroot:
@@ -45,7 +56,7 @@ def prepareData(inpt):
         sys.stdout.flush()
     par.comm.Barrier()
     nSnap_, startSnap_ = par.partitionData(nFullData) 
-    data_to_downsample_ = dataset[startSnap_:startSnap_+nSnap_,:].astype('float32')
+    data_to_downsample_ = dataset[startSnap_:startSnap_+nSnap_,:nDim].astype('float32')
     par.printRoot('DONE!')  
 
     # Rescale data

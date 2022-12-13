@@ -15,18 +15,31 @@ nEpochs :			30 30
 # Batch size for normalizing flow training
 batch_size_train :		2048 2048
 # Subset of data on which training is done
-nWorkingData : 			4e5 
+nWorkingData : 			1e5 
 # Subset of data used to adjust the sampling probability to the desired number of samples
-nWorkingDataAdjustment : 	1e6
+# If nWorkingDataAdjustment < 0, all data with the prescribed frequency is used
+nWorkingDataAdjustment :        1e6
+data_freq_adjustment :          10
 # Learning rate during normalizing flow training
 learning_rate : 		2e-4 2e-4
+# Use GPU
+use_gpu :                       True
+
+! ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ !
+! ~~~~ Normalizing flow architecture
+! ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ !
+
+nCouplingLayer :		 2  2  
+num_bins : 			 4  8
+hidden_features :		12 12 
+num_blocks :			 3  3
 
 ! ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ !
 ! ~~~~ Density evaluation
 ! ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ !
 
-# Batch size for evaluation of normalizing flows
-batch_size_eval :		2.5e3
+# Batch size for evaluation of density
+batch_size_eval :		2.5e4
 
 ! ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ !
 ! ~~~~ Reproducibility
@@ -35,22 +48,16 @@ batch_size_eval :		2.5e3
 seed :				42
 
 ! ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ !
-! ~~~~ Normalizing flow architecture
+! ~~~~ Timer
 ! ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ !
 
-nCouplingLayer :		 4  4  
-num_bins : 			 8  8
-hidden_features :		16 16 
-num_blocks :			 4  4 
-
+printTiming :			False
 
 ! ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ !
 ! ~~~~ Data
 ! ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ !
 
-#dataFile :			data/combustion2DToDownsampleSmall.npy
-dataFile :			/lustre/eaglefs/projects/pace/nickdata/level1data_shuffled.npy
-num_index_to_keep :		11
+dataFile :			data/combustion2DToDownsampleSmall.npy
 preShuffled :			True
 scalerFile :			scaler.npz
 
@@ -59,7 +66,7 @@ scalerFile :			scaler.npz
 ! ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ !
 
 # List of desired number of samples
-nSamples : 			1e3 1e4 1e5 2e5
+nSamples : 			1e3 1e4 1e5
 # Compute criterion (expensive for large number of downsampled data)
 computeDistanceCriterion : 	True
 # Prefix of the NPZ file containing the downsampled data
