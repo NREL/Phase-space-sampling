@@ -5,6 +5,7 @@ import os
 
 class NoDataRootError(Exception):
     """Exception to be thrown when data root doesn't exist."""
+
     pass
 
 
@@ -17,9 +18,11 @@ def get_data_root():
     Raises:
         NoDataRootError: If environment variable doesn't exist.
     """
-    data_root_var = 'DATAROOT'
+    data_root_var = "DATAROOT"
     try:
         return os.environ[data_root_var]
     except KeyError:
-        raise NoDataRootError('Data root must be in environment variable {}, which'
-                              ' doesn\'t exist.'.format(data_root_var))
+        raise NoDataRootError(
+            "Data root must be in environment variable {}, which"
+            " doesn't exist.".format(data_root_var)
+        )
