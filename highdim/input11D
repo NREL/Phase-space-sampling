@@ -1,9 +1,15 @@
 ! ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ !
+! ~~~~ Density estimation
+! ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ !
+# Number of repetitions for the probability map estimation (keep at 2)
+num_pdf_iter : 2
+pdf_method : NormalizingFlow
+
+
+! ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ !
 ! ~~~~ Normalizing flow training
 ! ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ !
 
-# Number of repetitions for the probability map estimation (keep at 2)
-num_flow_iter :			2
 # Number of epochs for each normalizing flow training
 nEpochs :			30 30
 # Batch size for normalizing flow training
@@ -16,7 +22,7 @@ nWorkingDataAdjustment : 	1e6
 learning_rate : 		2e-4 2e-4
 
 ! ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ !
-! ~~~~ Normalzing flow evaluation
+! ~~~~ Density evaluation
 ! ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ !
 
 # Batch size for evaluation of normalizing flows
