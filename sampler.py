@@ -196,6 +196,33 @@ def trainFlow(np_data,flow,pdf_iter,inpt):
 
     return last_loss
 
+
+def trainBinPDF(np_data,pdf_iter,inpt):
+   
+    # Timer
+    times = time.time()    
+    if not par.irank==par.iroot:
+        return None, None
+    # Train
+    np_data_rescaled = rescaleData(np_data,inpt) 
+    H, edges = np.histogramdd(np_data_rescaled, bins = int(inpt['num_bins']))
+    logProb = np.log(1e-16 + H/np.sum(H))
+
+    os.makedirs('TrainingLog', exist_ok=True)
+    np.savez('TrainingLog/modelWeights_iter'+str(pdf_iter)+'.npz',
+             edges=edges,
+             logProb=logProb)
+
+    # Timer
+    timee = time.time()
+    printTiming = (inpt['printTiming'] == 'True')
+    if printTiming:
+        par.printRoot('Time Train : %.2f' % (timee-times))
+   
+ 
+    return logProb, edges
+
+
 def as_list(x):
     if x.shape == (1,1):
         return [x[0,0]]
@@ -247,7 +274,7 @@ def adjustLogSamplingProbMultPar(logSamplingProb_,nDownSamples,nFullSample):
 
     return factor
 
-def evalLogProb(flow,np_data_to_downsample, nFullData, pdf_iter, inpt):
+def evalLogProbNF(flow,np_data_to_downsample, nFullData, pdf_iter, inpt):
 
     # Wait for root to be done with training
     par.comm.barrier()
@@ -277,6 +304,40 @@ def evalLogProb(flow,np_data_to_downsample, nFullData, pdf_iter, inpt):
         )
         printProgressBar(step+1, nBatch, prefix = 'Eval Step %d / %d ' % ( step+1, nBatch),suffix = 'Complete', length = 50)
 
+    # Timer
+    timee = time.time()
+    printTiming = (inpt['printTiming'] == 'True')
+    if printTiming:
+        par.printRoot('Time Eval : %.2f' % (par.allmaxScalar(timee-times)))
+
+    return log_density_np
+
+def evalLogProbBIN(np_data_to_downsample, nFullData, pdf_iter, inpt):
+
+    # Wait for root to be done with training
+    par.comm.barrier()
+
+    # Timer
+    times = time.time()
+
+    # Load trained PDF estimate
+    binPDF = np.load('TrainingLog/modelWeights_iter'+str(pdf_iter)+'.npz')
+    logProb = binPDF['logProb']
+    edges = binPDF['edges']
+
+    # Evaluation
+    np_data_rescaled = rescaleData(np_data_to_downsample,inpt)
+    digit = []
+    digit_zeros = []
+    for idim in range(np_data_rescaled.shape[1]):
+        digit_zeros += list(np.argwhere(np_data_rescaled[:,idim]>edges[idim][-1])[:,0])
+        digit_zeros += list(np.argwhere(np_data_rescaled[:,idim]<edges[idim][0])[:,0])
+        tmp_dig = np.digitize(np_data_rescaled[:,idim], edges[idim]) - 1
+        tmp_dig = np.clip(tmp_dig, a_min=0, a_max=logProb.shape[idim]-1).astype(int)
+        digit.append(tmp_dig)
+    log_density_np = logProb[tuple(digit)]
+    log_density_np[list(set(digit_zeros))] = np.log(1e-16)
+    
     # Timer
     timee = time.time()
     printTiming = (inpt['printTiming'] == 'True')

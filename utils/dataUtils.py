@@ -4,19 +4,20 @@ import sys
 #from memory_profiler import profile
 
 #@profile
-def checkData(shape, N, d, nWorkingData,nWorkingDataAdjustment):
+def checkData(shape, N, d, nWorkingData,nWorkingDataAdjustment, useNF):
     if not len(shape)==2:
         par.printAll('Expected 2 dimensions for the data, first is the number of samples, second is the dimension')
         par.comm.Abort()
     else:
         par.printRoot('Dataset has ' + str(N) + ' samples of dimension ' + str(d) )
 
-    # Check that sizes make sense
-    if N < nWorkingData * 10:
-        par.printRoot('WARNING: Only ' + str(N) + ' samples, this may not work')
-    if N < max(nWorkingData, nWorkingDataAdjustment):
-        par.printAll('ERROR: At least ' + str(max(nWorkingData,nWorkingDataAdjustment)) +' samples required')
-        par.comm.Abort()
+    if useNF:
+        # Check that sizes make sense
+        if N < nWorkingData * 10:
+            par.printRoot('WARNING: Only ' + str(N) + ' samples, this may not work')
+        if N < max(nWorkingData, nWorkingDataAdjustment):
+            par.printAll('ERROR: At least ' + str(max(nWorkingData,nWorkingDataAdjustment)) +' samples required')
+            par.comm.Abort()
 
     return
 
@@ -45,8 +46,9 @@ def prepareData(inpt):
         nDim = min(dataset.shape[1],nDimReduced)
     else:
         nDim = dataset.shape[1]
-    if par.irank==par.iroot: 
-        checkData(dataset.shape, nFullData, nDim, nWorkingData, nWorkingDataAdjustment)
+    if par.irank==par.iroot:
+        useNF = (inpt['pdf_method'].lower() == 'normalizingflow') 
+        checkData(dataset.shape, nFullData, nDim, nWorkingData, nWorkingDataAdjustment, useNF)
     
     # Distribute dataset
     if par.irank==par.iroot:

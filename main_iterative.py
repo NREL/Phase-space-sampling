@@ -23,6 +23,7 @@ import parallel as par
 
 inpt = myparser.parseInputFile()
 use_normalizing_flow = (inpt['pdf_method'].lower() == 'normalizingflow')
+use_bins = (inpt['pdf_method'].lower() == 'bins')
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # ~~~~ Parameters to save
@@ -105,19 +106,27 @@ for pdf_iter in range(int(inpt['num_pdf_iter'])):
         sampler.checkLoss(pdf_iter,flow_nll_loss)
    
         # Evaluate probability: This is the expensive step (happens on multi processors)
-        log_density_np_ = sampler.evalLogProb(flow,data_to_downsample_, nFullData, pdf_iter, inpt)
+        log_density_np_ = sampler.evalLogProbNF(flow,data_to_downsample_, nFullData, pdf_iter, inpt)
+
+    if use_bins:
+        bin_pdfH, bin_pdfEdges = sampler.trainBinPDF(data_for_pdf_est, pdf_iter, inpt)
+        # Evaluate probability: This is the expensive step (happens on multi processors)
+        log_density_np_ = sampler.evalLogProbBIN(data_to_downsample_, nFullData, pdf_iter, inpt)
+
+    if use_serial_adjustment:
+        log_density_np_for_adjust = par.gatherNelementsInArray(log_density_np_,nWorkingDataAdjustment)
+    else:
+        log_density_np_for_adjust = None
+
+    # Correct probability estimate
+    if pdf_iter > 0:
+        log_density_np_ = log_density_np_ - log_samplingProb_
         if use_serial_adjustment:
             log_density_np_for_adjust = par.gatherNelementsInArray(log_density_np_,nWorkingDataAdjustment)
         else:
             log_density_np_for_adjust = None
-
-        # Correct probability estimate
-        if pdf_iter > 0:
-            log_density_np_ = log_density_np_ - log_samplingProb_
-            if use_serial_adjustment:
-                log_density_np_for_adjust = par.gatherNelementsInArray(log_density_np_,nWorkingDataAdjustment)
-            else:
-                log_density_np_for_adjust = None
+        
+       
 
     par.printRoot('TRAIN ITER '+str(pdf_iter))
 
