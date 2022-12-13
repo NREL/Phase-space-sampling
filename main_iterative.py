@@ -112,10 +112,12 @@ for pdf_iter in range(int(inpt['num_pdf_iter'])):
             log_density_np_for_adjust = None
 
         # Correct probability estimate
-        if pdf_iter>0:
+        if pdf_iter > 0:
             log_density_np_ = log_density_np_ - log_samplingProb_
-            log_density_np_for_adjust = par.gatherNelementsInArray(log_density_np_,nWorkingDataAdjustment)
-        
+            if use_serial_adjustment:
+                log_density_np_for_adjust = par.gatherNelementsInArray(log_density_np_,nWorkingDataAdjustment)
+            else:
+                log_density_np_for_adjust = None
 
     par.printRoot('TRAIN ITER '+str(pdf_iter))
 
