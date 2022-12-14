@@ -6,6 +6,8 @@ authors = ["Malik Hassanaly <malik[dot]hassanaly[at]nrel[point]gov>" ]
 
 [tool.poetry.dependencies]
 python = ">=3.8,<3.11"
+torch = {url = "https://download.pytorch.org/whl/cpu/torch-1.7.1-cp39-none-macosx_10_9_x86_64.whl"}
+scikit-learn = "^1.2.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
@@ -16,6 +18,10 @@ flake8 = "^4.0.1"
 flake8-bugbear = "^22.4.25"
 pep8-naming = "^0.12.1"
 flake8-docstrings = "^1.6.0"
+numpy = "^1.19.1"
+matplotlib = "^3.2.2"
+mpi4py = "^3.0.3"
+imageio = "2.9.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
