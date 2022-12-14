@@ -17,10 +17,13 @@
 
 The purpose of the tool is to perform a smart downselection of a large number of datapoints. Typically, large numerical simulations generate billions, or even trillions of datapoints. However, there may be redundancy in the dataset which unecessarily constrains memory and computing requirements. Here, redundancy is defined as closeness in feature space. The method is called phase-space sampling.
 
-## Running the example
+## Running the example without poetry
 
 `bash run2D.sh`: Example of downsampling a 2D combustion dataset. First the downsampling is performed (`mpiexec -np 4 python main_iterative.py input`). Then the loss function for each flow iteration is plotted (`python plotLoss.py input`). Finally, the samples are visualized (`python visualizeDownSampled_subplots.py input`). All figures are saved under the folder `Figures`.
 
+## Running the example with poetry
+
+To avoid package management yourself `bash run2D_poetry.sh`. This requires [poetry](https://python-poetry.org/docs/#installation)
 
 ## Parallelization
 
