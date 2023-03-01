@@ -111,14 +111,14 @@ The folder `data-efficientML` is NOT necessary for using the phase-space samplin
 
 ```
 
-@article{hassanaly2022UIPS,
+@article{hassanaly2023UIPS,
   title={Uniform-in-Phase-Space Data Selection with Iterative Normalizing Flows},
   author={Hassanaly, Malik and Perry, Bruce A. and Mueller, Michael E. and Yellapantula, Shashank},
-  journal={\textit{Under review}},
+  journal={Data-centric Engineering},
   pages={},
   volume={},
-  year={2022},
-  publisher={}
+  year={2023},
+  publisher={Cambridge}
 }
 
 ```
