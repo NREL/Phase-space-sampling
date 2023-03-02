@@ -118,7 +118,7 @@ The folder `data-efficientML` is NOT necessary for using the phase-space samplin
   pages={},
   volume={},
   year={2023},
-  publisher={Cambridge}
+  publisher={Cambridge University Press}
 }
 
 ```
