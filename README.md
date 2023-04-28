@@ -107,6 +107,7 @@ The folder `data-efficientML` is NOT necessary for using the phase-space samplin
 ## Reference
 
 [Published version (open access)](https://www.cambridge.org/core/journals/data-centric-engineering/article/uniforminphasespace-data-selection-with-iterative-normalizing-flows/E6212E3FCB5A7EE7B1399BA49667B84C)
+<br> 
 [Preprint version (open access)](https://arxiv.org/pdf/2112.15446.pdf)
 
 
