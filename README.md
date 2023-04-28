@@ -106,6 +106,7 @@ The folder `data-efficientML` is NOT necessary for using the phase-space samplin
 
 ## Reference
 
+[Published version (open access)](https://www.cambridge.org/core/journals/data-centric-engineering/article/uniforminphasespace-data-selection-with-iterative-normalizing-flows/E6212E3FCB5A7EE7B1399BA49667B84C)
 [Preprint version (open access)](https://arxiv.org/pdf/2112.15446.pdf)
 
 
@@ -115,8 +116,8 @@ The folder `data-efficientML` is NOT necessary for using the phase-space samplin
   title={Uniform-in-Phase-Space Data Selection with Iterative Normalizing Flows},
   author={Hassanaly, Malik and Perry, Bruce A. and Mueller, Michael E. and Yellapantula, Shashank},
   journal={Data-centric Engineering},
-  pages={},
-  volume={},
+  pages={e11},
+  volume={4},
   year={2023},
   publisher={Cambridge University Press}
 }
