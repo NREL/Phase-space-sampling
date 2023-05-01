@@ -48,7 +48,7 @@ We provide the data for running a 2D downsampling example. The data is located a
 
 ## Assumptions
 
-The dataset to downsample has size ![equation](https://latex.codecogs.com/gif.image?%5Cdpi%7B110%7D%20N%20%5Ctimes%20d) where ![equation](https://latex.codecogs.com/gif.image?\dpi{110}&space;N&space;\gg&space;d). The first dimension (![equation](https://latex.codecogs.com/gif.image?\dpi{110}&space;N)) is called the number of samples and the second dimension (![equation](https://latex.codecogs.com/gif.image?\dpi{110}&space;d)) is the dimension of the samples. The code has been successfully tested in up to 89 dimensions and there is no inherent limit for ![equation](https://latex.codecogs.com/gif.image?\dpi{110}&space;d).
+The dataset to downsample has size $N \times d$ where $N \gg d$. The first dimension ($N$) is called the number of samples and the second dimension ($d$) is the dimension of the samples. The code has been successfully tested in up to 89 dimensions and there is no inherent limit for $d$.
 
 ## Hyperparameters
 
@@ -62,7 +62,7 @@ When increasing the number of dimensions, we recommend adjusting the hyperparame
 
 It may not be obvious to evaluate how uniformly distributed are the obtained phase-space samples. During the code execution, a `mean dist` is displayed. This corresponds to the average distance to the nearest neighbor of each data point. The higher the distance, the more uniformly distributed is the dataset. At first, the distance is shown for a random sampling case. Then it is displayed at every iteration. The mean distance should be higher than for the random sampling case. In addition, the second iteration should lead better mean distance than the first one. A warning message is displayed in case the second flow iteration did not improve the sampling. An error message is displayed in case the last flow iteration did not improve the sampling compared to the random case.
 
-The computational cost associated with the nearest neighbor computations scales as ![equation](https://latex.codecogs.com/svg.image?N^2) where ![equation](https://latex.codecogs.com/svg.image?N) is the number of samples. The cost is not prohibitive when computed on the downsampled data since the size of dataset is small. In case where one uses a very large number of phase-space sampled data points, it may be necessary to disable the neighbor distance calculation.
+The computational cost associated with the nearest neighbor computations scales as $N^2$ where $N$ is the number of samples. The cost is not prohibitive when computed on the downsampled data since the size of dataset is small. In case where one uses a very large number of phase-space sampled data points, it may be necessary to disable the neighbor distance calculation.
 
 ### The normalizing flow loss
 
@@ -72,7 +72,7 @@ A script is provided to visualize the losses. Execute `python plotLoss.py input`
 
 ## Example 2D
 
-Suppose one wants to downsample an dataset where ![equation](https://latex.codecogs.com/gif.image?\dpi{110}&space;N=10^7) and ![equation](https://latex.codecogs.com/gif.image?\dpi{110}&space;d=2). First, the code estimates the probability map of the data in order to identify where are located redundant data points. An example dataset (left) and associated probability map (right) are shown below
+Suppose one wants to downsample an dataset where $N=10^7$ and $d=2$. First, the code estimates the probability map of the data in order to identify where are located redundant data points. An example dataset (left) and associated probability map (right) are shown below
 
 <p float="left">
   <img src="readmeImages/fulldataset.png" width="350"/>
