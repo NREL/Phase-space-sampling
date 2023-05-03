@@ -307,12 +307,10 @@ def parallel_shuffle(A_):
         data back to the lower-ranked process and
         keeps upper data
         """
-        rank = comm.Get_rank()
-        assert rank == sendrank or rank == recvrank
+        assert irank - 1 == sendrank or irank -1 == recvrank
         assert sendrank < recvrank
-
-        if rank == sendrank:
-            comm.send(localdata, dest=recvrank)
+        if irank - 1 == sendrank:
+            comm.send(localdata, dest=recvrank )
             newdata = comm.recv(source=recvrank)
         else:
             bothdata = list(localdata)
@@ -324,20 +322,22 @@ def parallel_shuffle(A_):
         return newdata
 
     def odd_even_sort(data):
-        rank = comm.Get_rank()
-        nprocs = comm.Get_size()
+        for step in range(1, nProc + 1):
+            if ((irank - 1 + step) % 2) == 0:
+                if irank - 1 < nProc - 1:
+                    data = exchange(data, irank - 1, irank)
+            elif irank - 1 > 0:
+                data = exchange(data, irank - 2, irank - 1)
         data.sort()
-        for step in range(1, nprocs + 1):
-            if ((rank + step) % 2) == 0:
-                if rank < nprocs - 1:
-                    data = exchange(data, rank, rank + 1)
-            elif rank > 0:
-                data = exchange(data, rank - 1, rank)
-        return np.array([x for _, x in data])
+        return np.array([x for x, _ in data]), np.array([x for _, x in data])
 
     # Tag data with random numbers
-    Ashuffled_ = [(random.random(), A_[i]) for i in range(A_.shape[0])]
+    n_points = A_.shape[0]
+    randomArray = np.random.uniform(size=n_points)
+    Ashuffled_ = [(randomArray[i], A_[i]) for i in range(n_points)]
     # Sort by random num
-    Ashuffled_ = odd_even_sort(Ashuffled_)
-
+    indShuf, Ashuffled_ = odd_even_sort(Ashuffled_)
+    assert np.amin(np.diff(indShuf)) > 0
+ 
     return Ashuffled_
+
