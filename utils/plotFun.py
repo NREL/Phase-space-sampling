@@ -5,7 +5,6 @@ from plotsUtil import *
 
 
 def cornerPlotScatter(data, title=None):
-
     if not par.irank == par.iroot:
         return
 
@@ -37,7 +36,6 @@ def cornerPlotScatter(data, title=None):
 
 
 def cornerPlotScatterColor(data, colorData):
-
     if not par.irank == par.iroot:
         return
 

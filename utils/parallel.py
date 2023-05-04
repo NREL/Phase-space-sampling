@@ -11,6 +11,7 @@ iroot = 1
 nProc = comm.Get_size()
 status = MPI.Status()
 
+
 # ~~~~ Print functions
 def printProc(description, item=None, proc=iroot):
     if irank == proc:
@@ -365,7 +366,9 @@ def parallel_shuffle_np(A_, nData):
         return data[ind], dataInd[ind], tags[ind]
 
     # From https://stackoverflow.com/questions/36266968/parallel-computing-shuffle
-    def exchange(localdata, localinds, localtags, sendrank, recvrank, nSnap_array):
+    def exchange(
+        localdata, localinds, localtags, sendrank, recvrank, nSnap_array
+    ):
         """
         Perform a merge-exchange with a neighbour;
         sendrank sends local data to recvrank,
@@ -441,8 +444,10 @@ def parallel_shuffle_np(A_, nData):
     # Get data shape of each proc
     nSnap_, startSnap_ = partitionData(nData)
     nSnap_array = comm.allgather(nSnap_)
-    dataInd_ = np.array(list(range(startSnap_, nSnap_+startSnap_)))
+    dataInd_ = np.array(list(range(startSnap_, nSnap_ + startSnap_)))
     # Sort by random num
-    Ashuffled_, dataInd_, tags_ = odd_even_sort(A_, dataInd_, tags_, nSnap_array)
+    Ashuffled_, dataInd_, tags_ = odd_even_sort(
+        A_, dataInd_, tags_, nSnap_array
+    )
 
     return Ashuffled_, dataInd_, tags_

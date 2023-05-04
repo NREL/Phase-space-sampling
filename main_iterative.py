@@ -102,7 +102,6 @@ flow_nll_loss = np.zeros(int(inpt["num_pdf_iter"]))
 data_for_pdf_est = working_data
 
 for pdf_iter in range(int(inpt["num_pdf_iter"])):
-
     if use_normalizing_flow:
         # Create the normalizing flow
         flow = sampler.createFlow(dim, pdf_iter, inpt)

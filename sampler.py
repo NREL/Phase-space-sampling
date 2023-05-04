@@ -57,7 +57,6 @@ def makeParamList(strEntry, fun, inpt, pdf_iter):
 
 
 def computeDistanceToClosestNeighbor(data):
-
     if not par.irank == par.iroot:
         return
 
@@ -145,7 +144,6 @@ def logTraining(step, loss, pdf_iter):
 
 
 def trainFlow(np_data, flow, pdf_iter, inpt):
-
     # Timer
     times = time.time()
 
@@ -242,7 +240,6 @@ def trainFlow(np_data, flow, pdf_iter, inpt):
 
 
 def trainBinPDF(np_data, pdf_iter, inpt):
-
     # Timer
     times = time.time()
     if not par.irank == par.iroot:
@@ -339,7 +336,6 @@ def adjustLogSamplingProbMultPar(logSamplingProb_, nDownSamples, nFullSample):
 
 
 def evalLogProbNF(flow, np_data_to_downsample, nFullData, pdf_iter, inpt):
-
     # Wait for root to be done with training
     par.comm.barrier()
 
@@ -397,7 +393,6 @@ def evalLogProbNF(flow, np_data_to_downsample, nFullData, pdf_iter, inpt):
 
 
 def evalLogProbBIN(np_data_to_downsample, nFullData, pdf_iter, inpt):
-
     # Wait for root to be done with training
     par.comm.barrier()
 
@@ -476,7 +471,6 @@ def downSample(
     nFullData,
     inpt,
 ):
-
     # Mode of adjustment of the sampling probability
     nWorkingDataAdjustment = int(float(inpt["nWorkingDataAdjustment"]))
     if nWorkingDataAdjustment < 0:

@@ -5,6 +5,7 @@ import parallel as par
 
 # from memory_profiler import profile
 
+
 # @profile
 def checkData(shape, N, d, nWorkingData, nWorkingDataAdjustment, useNF):
     if not len(shape) == 2:
@@ -30,7 +31,6 @@ def checkData(shape, N, d, nWorkingData, nWorkingDataAdjustment, useNF):
 
 # @profile
 def prepareData(inpt):
-
     # Set parameters from input
     dataFile = inpt["dataFile"]
     preShuffled = inpt["preShuffled"] == "True"
