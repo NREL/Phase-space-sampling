@@ -13,16 +13,12 @@ def checkData(shape, N, d, nWorkingData, nWorkingDataAdjustment, useNF):
         )
         par.comm.Abort()
     else:
-        par.printRoot(
-            f"Dataset has {N} samples of dimension {d}"
-        )
+        par.printRoot(f"Dataset has {N} samples of dimension {d}")
 
     if useNF:
         # Check that sizes make sense
         if N < nWorkingData * 10:
-            par.printRoot(
-                f"WARNING: Only {N} samples, this may not work"
-            )
+            par.printRoot(f"WARNING: Only {N} samples, this may not work")
         if N < max(nWorkingData, nWorkingDataAdjustment):
             par.printAll(
                 f"ERROR: At least {max(nWorkingData, nWorkingDataAdjustment)} samples required"
@@ -102,9 +98,11 @@ def prepareData(inpt):
             print("SHUFFLE DATA ... ", end="")
             sys.stdout.flush()
 
-        data_to_downsample_, tags_ = par.parallel_shuffle_np(data_to_downsample_, nFullData)
-        tags_gathered =  par.gather1DList(list(tags_), 0, nFullData)
-        assert np.amin(np.diff(tags_gathered))>-1e-12
+        data_to_downsample_, tags_ = par.parallel_shuffle_np(
+            data_to_downsample_, nFullData
+        )
+        tags_gathered = par.gather1DList(list(tags_), 0, nFullData)
+        assert np.amin(np.diff(tags_gathered)) > -1e-12
 
         par.printRoot("DONE!")
 

@@ -184,8 +184,7 @@ for pdf_iter in range(int(inpt["num_pdf_iter"])):
             # Last pdf iter : Root proc saves downsampled data, and checks the outcome
             if par.irank == par.iroot:
                 np.savez(
-                    inpt["prefixDownsampledData"]
-                    + f"_{nSample}.npz",
+                    inpt["prefixDownsampledData"] + f"_{nSample}.npz",
                     data=downSampledData,
                     indices=downSampledIndices,
                 )
