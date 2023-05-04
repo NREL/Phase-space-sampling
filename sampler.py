@@ -36,12 +36,7 @@ def str2BigInt(str):
 def checkParamListLength(listToCheck, targetLength, name):
     if not len(listToCheck) == targetLength and (not len(listToCheck) == 1):
         par.printAll(
-            "Expected "
-            + name
-            + " of size "
-            + str(targetLength)
-            + " got "
-            + str(len(listToCheck))
+            f"Expected {name} of size {targetLength} got {len(listToCheck)}"
         )
         par.comm.Abort()
 
@@ -62,7 +57,6 @@ def makeParamList(strEntry, fun, inpt, pdf_iter):
 
 
 def computeDistanceToClosestNeighbor(data):
-
     if not par.irank == par.iroot:
         return
 
@@ -130,7 +124,7 @@ def makePytorchData(
 
 def prepareLog(pdf_iter):
     os.makedirs("TrainingLog", exist_ok=True)
-    filename = "TrainingLog/log_iter" + str(pdf_iter) + ".csv"
+    filename = f"TrainingLog/log_iter{pdf_iter}.csv"
     try:
         os.remove(filename)
     except:
@@ -142,15 +136,14 @@ def prepareLog(pdf_iter):
 
 
 def logTraining(step, loss, pdf_iter):
-    filename = "TrainingLog/log_iter" + str(pdf_iter) + ".csv"
+    filename = f"TrainingLog/log_iter{pdf_iter}.csv"
     f = open(filename, "a+")
-    f.write(str(int(step)) + ";" + str(loss.item()) + "\n")
+    f.write(f"{int(step)};{loss.item()}\n")
     f.close()
     return
 
 
 def trainFlow(np_data, flow, pdf_iter, inpt):
-
     # Timer
     times = time.time()
 
@@ -232,7 +225,7 @@ def trainFlow(np_data, flow, pdf_iter, inpt):
 
     torch.save(
         flow.state_dict(),
-        "TrainingLog/modelWeights_iter" + str(pdf_iter) + ".pt",
+        f"TrainingLog/modelWeights_iter{pdf_iter}.pt",
     )
 
     # Timer
@@ -247,7 +240,6 @@ def trainFlow(np_data, flow, pdf_iter, inpt):
 
 
 def trainBinPDF(np_data, pdf_iter, inpt):
-
     # Timer
     times = time.time()
     if not par.irank == par.iroot:
@@ -259,7 +251,7 @@ def trainBinPDF(np_data, pdf_iter, inpt):
 
     os.makedirs("TrainingLog", exist_ok=True)
     np.savez(
-        "TrainingLog/modelWeights_iter" + str(pdf_iter) + ".npz",
+        f"TrainingLog/modelWeights_iter{pdf_iter}.npz",
         edges=edges,
         logProb=logProb,
     )
@@ -344,7 +336,6 @@ def adjustLogSamplingProbMultPar(logSamplingProb_, nDownSamples, nFullSample):
 
 
 def evalLogProbNF(flow, np_data_to_downsample, nFullData, pdf_iter, inpt):
-
     # Wait for root to be done with training
     par.comm.barrier()
 
@@ -358,7 +349,7 @@ def evalLogProbNF(flow, np_data_to_downsample, nFullData, pdf_iter, inpt):
     # Load trained flow
     flow.load_state_dict(
         torch.load(
-            "TrainingLog/modelWeights_iter" + str(pdf_iter) + ".pt",
+            f"TrainingLog/modelWeights_iter{pdf_iter}.pt",
             map_location=device,
         )
     )
@@ -402,7 +393,6 @@ def evalLogProbNF(flow, np_data_to_downsample, nFullData, pdf_iter, inpt):
 
 
 def evalLogProbBIN(np_data_to_downsample, nFullData, pdf_iter, inpt):
-
     # Wait for root to be done with training
     par.comm.barrier()
 
@@ -410,7 +400,7 @@ def evalLogProbBIN(np_data_to_downsample, nFullData, pdf_iter, inpt):
     times = time.time()
 
     # Load trained PDF estimate
-    binPDF = np.load("TrainingLog/modelWeights_iter" + str(pdf_iter) + ".npz")
+    binPDF = np.load(f"TrainingLog/modelWeights_iter{pdf_iter}.npz")
     logProb = binPDF["logProb"]
     edges = binPDF["edges"]
 
@@ -444,14 +434,18 @@ def evalLogProbBIN(np_data_to_downsample, nFullData, pdf_iter, inpt):
 
 def gatherDownsampledData(
     phaseSpaceSampledData_,
+    dataInd_,
     indexSelected_,
     nSample,
     nFullData,
     nSamplesAssigned,
 ):
-    nSnap_, starSnap_ = par.partitionData(nFullData)
+    nSnap_, startSnap_ = par.partitionData(nFullData)
     # Back to global indexing
-    indexSelected_ = np.array(indexSelected_).astype("int32") + starSnap_
+    if dataInd_ is None:
+        indexSelected_ = np.array(indexSelected_).astype("int32") + startSnap_
+    else:
+        indexSelected_ = dataInd_[indexSelected_]
     # Gather indices and data
     indexSelected = None
     indexSelected = par.gather1DArray(
@@ -470,13 +464,13 @@ def gatherDownsampledData(
 
 def downSample(
     data_to_downsample_,
+    dataInd_,
     log_density_np_,
     log_density_np_adjustment,
     nSample,
     nFullData,
     inpt,
 ):
-
     # Mode of adjustment of the sampling probability
     nWorkingDataAdjustment = int(float(inpt["nWorkingDataAdjustment"]))
     if nWorkingDataAdjustment < 0:
@@ -532,6 +526,7 @@ def downSample(
     # Gather
     phaseSpaceSampledData, indexDownsampledData = gatherDownsampledData(
         phaseSpaceSampledData_,
+        dataInd_,
         indexSelected_,
         nSample,
         nFullData,
@@ -561,8 +556,7 @@ def checkProcedure(meanCriterion, nSample, randomCriterion):
     errorSignal = False
     if meanCriterion[-1] < randomCriterion:
         par.printRoot(
-            "ERROR: Failure of the sampling procedure for nSample : "
-            + str(nSample)
+            f"ERROR: Failure of the sampling procedure for nSample : {nSample}"
         )
         errorSignal = True
     if errorSignal:
@@ -574,6 +568,5 @@ def checkProcedure(meanCriterion, nSample, randomCriterion):
         return
     if meanCriterion[-1] < meanCriterion[0]:
         par.printRoot(
-            "WARNING: Possible failure of the sampling procedure for nSample : "
-            + str(nSample)
+            f"WARNING: Possible failure of the sampling procedure for nSample : {nSample}"
         )

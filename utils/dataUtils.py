@@ -5,6 +5,7 @@ import parallel as par
 
 # from memory_profiler import profile
 
+
 # @profile
 def checkData(shape, N, d, nWorkingData, nWorkingDataAdjustment, useNF):
     if not len(shape) == 2:
@@ -13,21 +14,15 @@ def checkData(shape, N, d, nWorkingData, nWorkingDataAdjustment, useNF):
         )
         par.comm.Abort()
     else:
-        par.printRoot(
-            "Dataset has " + str(N) + " samples of dimension " + str(d)
-        )
+        par.printRoot(f"Dataset has {N} samples of dimension {d}")
 
     if useNF:
         # Check that sizes make sense
         if N < nWorkingData * 10:
-            par.printRoot(
-                "WARNING: Only " + str(N) + " samples, this may not work"
-            )
+            par.printRoot(f"WARNING: Only {N} samples, this may not work")
         if N < max(nWorkingData, nWorkingDataAdjustment):
             par.printAll(
-                "ERROR: At least "
-                + str(max(nWorkingData, nWorkingDataAdjustment))
-                + " samples required"
+                f"ERROR: At least {max(nWorkingData, nWorkingDataAdjustment)} samples required"
             )
             par.comm.Abort()
 
@@ -36,7 +31,6 @@ def checkData(shape, N, d, nWorkingData, nWorkingDataAdjustment, useNF):
 
 # @profile
 def prepareData(inpt):
-
     # Set parameters from input
     dataFile = inpt["dataFile"]
     preShuffled = inpt["preShuffled"] == "True"
@@ -49,12 +43,19 @@ def prepareData(inpt):
         nDimReduced = int(float(inpt["nDimReduced"]))
     except:
         nDimReduced = -1
+    try:
+        nDatReduced = int(float(inpt["nDatReduced"]))
+    except:
+        nDatReduced = -1
 
     # Load the dataset but don't read it just yet
     dataset = np.load(dataFile, mmap_mode="r")
 
     # Check that dataset shape make sense
-    nFullData = dataset.shape[0]
+    if nDatReduced > 0:
+        nFullData = min(dataset.shape[0], nDatReduced)
+    else:
+        nFullData = dataset.shape[0]
     if nDimReduced > 0:
         nDim = min(dataset.shape[1], nDimReduced)
     else:
@@ -99,12 +100,19 @@ def prepareData(inpt):
     par.printRoot("DONE!")
 
     # Parallel shuffling
+    dataInd_ = None
     if not preShuffled:
         if par.irank == par.iroot:
             print("SHUFFLE DATA ... ", end="")
             sys.stdout.flush()
-        par.comm.Barrier()
-        par.parallel_shuffle(data_to_downsample_)
+
+        data_to_downsample_, dataInd_, tags_ = par.parallel_shuffle_np(
+            data_to_downsample_, nFullData
+        )
+        if nFullData < int(1e7):
+            tags_gathered = par.gather1DList(list(tags_), 0, nFullData)
+            assert np.amin(np.diff(tags_gathered)) > -1e-12
+
         par.printRoot("DONE!")
 
     # Get subsampled dataset to work with
@@ -112,4 +120,4 @@ def prepareData(inpt):
         data_to_downsample_, nWorkingData
     )
 
-    return data_to_downsample_, working_data, nFullData
+    return data_to_downsample_, dataInd_, working_data, nFullData

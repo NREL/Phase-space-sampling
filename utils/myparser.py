@@ -4,7 +4,6 @@ import parallel as par
 
 
 def parseInputFile():
-
     try:
         input_fileName = sys.argv[1]
     except IndexError:

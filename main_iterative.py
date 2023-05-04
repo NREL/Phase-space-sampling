@@ -72,7 +72,7 @@ np.random.seed(int(inpt["seed"]) + par.irank)
 # ~~~~ Prepare Data and scatter across processors
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-data_to_downsample_, working_data, nFullData = prepareData(inpt)
+data_to_downsample_, dataInd_, working_data, nFullData = prepareData(inpt)
 
 dim = data_to_downsample_.shape[1]
 
@@ -87,8 +87,7 @@ if par.irank == par.iroot and computeCriterion:
         )
         randomCriterion[inSample] = mean
         par.printRoot(
-            "\t nSample %d mean dist = %.4f, std dist = %.4f"
-            % (nSample, mean, std)
+            f"\t nSample {nSample} mean dist = {mean:.4f}, std dist = {std:.4f}"
         )
 
 # Prepare arrays used for sanity checks
@@ -103,7 +102,6 @@ flow_nll_loss = np.zeros(int(inpt["num_pdf_iter"]))
 data_for_pdf_est = working_data
 
 for pdf_iter in range(int(inpt["num_pdf_iter"])):
-
     if use_normalizing_flow:
         # Create the normalizing flow
         flow = sampler.createFlow(dim, pdf_iter, inpt)
@@ -150,7 +148,7 @@ for pdf_iter in range(int(inpt["num_pdf_iter"])):
         else:
             log_density_np_for_adjust = None
 
-    par.printRoot("TRAIN ITER " + str(pdf_iter))
+    par.printRoot(f"TRAIN ITER {pdf_iter}")
 
     for inSample, nSample in enumerate(nSamples):
         # Downsample
@@ -161,6 +159,7 @@ for pdf_iter in range(int(inpt["num_pdf_iter"])):
             log_samplingProb_,
         ) = sampler.downSample(
             data_to_downsample_,
+            dataInd_,
             log_density_np_,
             log_density_np_for_adjust,
             nSample,
@@ -178,18 +177,14 @@ for pdf_iter in range(int(inpt["num_pdf_iter"])):
             meanCriterion[pdf_iter, inSample] = mean
             stdCriterion[pdf_iter, inSample] = std
             par.printRoot(
-                "\t nSample %d mean dist = %.4f, std dist = %.4f"
-                % (nSample, mean, std)
+                f"\t nSample {nSample} mean dist = {mean:.4f}, std dist = {std:.4f}"
             )
 
         if pdf_iter == int(inpt["num_pdf_iter"]) - 1:
             # Last pdf iter : Root proc saves downsampled data, and checks the outcome
             if par.irank == par.iroot:
                 np.savez(
-                    inpt["prefixDownsampledData"]
-                    + "_"
-                    + str(nSample)
-                    + ".npz",
+                    inpt["prefixDownsampledData"] + f"_{nSample}.npz",
                     data=downSampledData,
                     indices=downSampledIndices,
                 )
@@ -208,6 +203,7 @@ for pdf_iter in range(int(inpt["num_pdf_iter"])):
             log_samplingProb_,
         ) = sampler.downSample(
             data_to_downsample_,
+            dataInd_,
             log_density_np_,
             log_density_np_for_adjust,
             nWorkingData,
