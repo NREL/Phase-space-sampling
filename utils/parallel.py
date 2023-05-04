@@ -12,8 +12,8 @@ nProc = comm.Get_size()
 status = MPI.Status()
 
 # ~~~~ Print functions
-def printRoot(description, item=None):
-    if irank == iroot:
+def printProc(description, item=None, proc=iroot):
+    if irank == proc:
         if type(item).__name__ == "NoneType":
             print(description)
         elif not type(item).__name__ == "ndarray":
@@ -23,6 +23,9 @@ def printRoot(description, item=None):
         sys.stdout.flush()
     return
 
+def printRoot(description, item=None, root=iroot):
+    printProc(description, item, iroot)
+    return
 
 def printAll(description, item=None):
     if type(item).__name__ == "NoneType":
@@ -34,6 +37,12 @@ def printAll(description, item=None):
     sys.stdout.flush()
     return
 
+def printAllOrdered(description, item=None):
+    for rank in range(nProc):
+        if irank == rank+1:
+           printProc(f"[{rank}] {description}", item=item, proc=irank)
+        comm.Barrier()
+    return
 
 def partitionData(nSnap):
     # ~~~~ Partition data snapshots with MPI
@@ -339,4 +348,76 @@ def parallel_shuffle(A_):
     Ashuffled_ = odd_even_sort(Ashuffled_)
  
     return Ashuffled_
+
+def parallel_shuffle_np(A_, nData):
+    """
+    Shuffle a MPI-distributed dataset along the first dimension
+    Works for arbitrary tensor dimensions
+    """
+
+    def sortByTags(data, tags):
+        ind = np.argsort(tags)
+        return data[ind], tags[ind]
+
+
+    # From https://stackoverflow.com/questions/36266968/parallel-computing-shuffle
+    def exchange(localdata, localtags, sendrank, recvrank, nSnap_array):
+        """
+        Perform a merge-exchange with a neighbour;
+        sendrank sends local data to recvrank,
+        which merge-sorts it, and then sends lower
+        data back to the lower-ranked process and
+        keeps upper data
+        """
+        assert irank - 1 == sendrank or irank -1 == recvrank
+        assert sendrank < recvrank
+
+        if irank - 1 == sendrank:
+            comm.Send(localdata, dest=recvrank, tag=0)
+            comm.Send(localtags, dest=recvrank, tag=1)
+
+            newdata = np.empty((nSnap_array[sendrank], localdata.shape[1]), dtype=np.float32)
+            newtags = np.empty(nSnap_array[sendrank], dtype=np.float32)
+            comm.Recv(newdata, source=recvrank, tag=0)
+            comm.Recv(newtags, source=recvrank, tag=1)
+
+        else:
+            otherdata = np.empty((nSnap_array[sendrank], localdata.shape[1]), dtype=np.float32)
+            othertags = np.empty(nSnap_array[sendrank], dtype=np.float32)
+            comm.Recv(otherdata, source=sendrank, tag=0)
+            comm.Recv(othertags, source=sendrank, tag=1)
+             
+            bothdata = np.concatenate((localdata, otherdata), axis=0)
+            bothtags = np.concatenate((localtags, othertags))
+
+            ind = np.argsort(bothtags)
+
+            comm.Send(bothdata[ind[: otherdata.shape[0]]], dest=sendrank, tag=0)
+            comm.Send(bothtags[ind[: otherdata.shape[0]]], dest=sendrank, tag=1)
+            newdata = bothdata[ind[otherdata.shape[0] :]]
+            newtags = bothtags[ind[otherdata.shape[0] :]]
+
+        return newdata, newtags
+
+    def odd_even_sort(data, tags, nSnap_array):
+        data, tags = sortByTags(data, tags)
+        for step in range(1, nProc + 1):
+            if ((irank - 1 + step) % 2) == 0:
+                if irank - 1 < nProc - 1:
+                    data, tags = exchange(data, tags, irank - 1, irank, nSnap_array)
+            elif irank - 1 > 0:
+                data, tags = exchange(data, tags, irank - 2, irank - 1, nSnap_array)
+        return data, tags
+
+
+    # Tag data with random numbers
+    n_points = A_.shape[0]
+    tags_ = np.random.uniform(size=n_points).astype('float32')
+    # Get data shape of each proc
+    nSnap_, _ = partitionData(nData)
+    nSnap_array = comm.allgather(nSnap_)
+    # Sort by random num
+    Ashuffled_, tags_ = odd_even_sort(A_, tags_, nSnap_array)
+ 
+    return Ashuffled_, tags_
 

@@ -101,11 +101,11 @@ def prepareData(inpt):
         if par.irank == par.iroot:
             print("SHUFFLE DATA ... ", end="")
             sys.stdout.flush()
-        if par.nProc > 1:
-            par.comm.Barrier()
-            data_to_downsample_ = par.parallel_shuffle(data_to_downsample_)
-        else:
-            np.random.shuffle(data_to_downsample_)
+
+        data_to_downsample_, tags_ = par.parallel_shuffle_np(data_to_downsample_, nFullData)
+        tags_gathered =  par.gather1DList(list(tags_), 0, nFullData)
+        assert np.amin(np.diff(tags_gathered))>-1e-12
+
         par.printRoot("DONE!")
 
     # Get subsampled dataset to work with
