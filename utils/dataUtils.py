@@ -43,12 +43,19 @@ def prepareData(inpt):
         nDimReduced = int(float(inpt["nDimReduced"]))
     except:
         nDimReduced = -1
+    try:
+        nDatReduced = int(float(inpt["nDatReduced"]))
+    except:
+        nDatReduced = -1
 
     # Load the dataset but don't read it just yet
     dataset = np.load(dataFile, mmap_mode="r")
 
     # Check that dataset shape make sense
-    nFullData = dataset.shape[0]
+    if nDatReduced > 0:
+        nFullData = min(dataset.shape[0], nDatReduced)
+    else:
+        nFullData = dataset.shape[0]
     if nDimReduced > 0:
         nDim = min(dataset.shape[1], nDimReduced)
     else:
