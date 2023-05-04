@@ -26,11 +26,11 @@ def printRoot(description, item=None):
 
 def printAll(description, item=None):
     if type(item).__name__ == "NoneType":
-        print("[" + str(irank) + "] " + description)
+        print(f"[{irank}] {description}")
     elif not type(item).__name__ == "ndarray":
-        print("[" + str(irank) + "] " + description + ": ", item)
+        print(f"[{irank}] {description}:", item)
     else:
-        print("[" + str(irank) + "] " + description + ": ", item.tolist())
+        print(f"[{irank}] {description}:", item.tolist())
     sys.stdout.flush()
     return
 
