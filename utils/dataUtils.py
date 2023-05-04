@@ -101,8 +101,9 @@ def prepareData(inpt):
         data_to_downsample_, tags_ = par.parallel_shuffle_np(
             data_to_downsample_, nFullData
         )
-        tags_gathered = par.gather1DList(list(tags_), 0, nFullData)
-        assert np.amin(np.diff(tags_gathered)) > -1e-12
+        if nFullData < int(1e7):
+            tags_gathered = par.gather1DList(list(tags_), 0, nFullData)
+            assert np.amin(np.diff(tags_gathered)) > -1e-12
 
         par.printRoot("DONE!")
 
