@@ -1,4 +1,4 @@
-torch==1.13.1
+torch
 numpy
 matplotlib
 mpi4py
