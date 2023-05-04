@@ -103,8 +103,11 @@ def prepareData(inpt):
         if par.irank == par.iroot:
             print("SHUFFLE DATA ... ", end="")
             sys.stdout.flush()
-        par.comm.Barrier()
-        par.parallel_shuffle(data_to_downsample_)
+        if par.nProc > 1:
+            par.comm.Barrier()
+            data_to_downsample_ = par.parallel_shuffle(data_to_downsample_)
+        else:
+            np.random.shuffle(data_to_downsample_)
         par.printRoot("DONE!")
 
     # Get subsampled dataset to work with
