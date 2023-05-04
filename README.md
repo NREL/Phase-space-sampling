@@ -101,9 +101,6 @@ Input file is provided in `highdim/input11D`
 
 The folder `data-efficientML` is NOT necessary for using the phase-space sampling package. It only contains the code necessary to reproduce the results shown in the paper:
 
-
-## Documentation
-
 ## Reference
 
 [Published version (open access)](https://www.cambridge.org/core/journals/data-centric-engineering/article/uniforminphasespace-data-selection-with-iterative-normalizing-flows/E6212E3FCB5A7EE7B1399BA49667B84C)
