@@ -14,20 +14,18 @@ def checkData(shape, N, d, nWorkingData, nWorkingDataAdjustment, useNF):
         par.comm.Abort()
     else:
         par.printRoot(
-            "Dataset has " + str(N) + " samples of dimension " + str(d)
+            f"Dataset has {N} samples of dimension {d}"
         )
 
     if useNF:
         # Check that sizes make sense
         if N < nWorkingData * 10:
             par.printRoot(
-                "WARNING: Only " + str(N) + " samples, this may not work"
+                f"WARNING: Only {N} samples, this may not work"
             )
         if N < max(nWorkingData, nWorkingDataAdjustment):
             par.printAll(
-                "ERROR: At least "
-                + str(max(nWorkingData, nWorkingDataAdjustment))
-                + " samples required"
+                f"ERROR: At least {max(nWorkingData, nWorkingDataAdjustment)} samples required"
             )
             par.comm.Abort()
 

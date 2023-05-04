@@ -87,8 +87,7 @@ if par.irank == par.iroot and computeCriterion:
         )
         randomCriterion[inSample] = mean
         par.printRoot(
-            "\t nSample %d mean dist = %.4f, std dist = %.4f"
-            % (nSample, mean, std)
+            f"\t nSample {nSample} mean dist = {mean:.4f}, std dist = {std:.4f}"
         )
 
 # Prepare arrays used for sanity checks
@@ -150,7 +149,7 @@ for pdf_iter in range(int(inpt["num_pdf_iter"])):
         else:
             log_density_np_for_adjust = None
 
-    par.printRoot("TRAIN ITER " + str(pdf_iter))
+    par.printRoot(f"TRAIN ITER {pdf_iter}")
 
     for inSample, nSample in enumerate(nSamples):
         # Downsample
@@ -178,8 +177,7 @@ for pdf_iter in range(int(inpt["num_pdf_iter"])):
             meanCriterion[pdf_iter, inSample] = mean
             stdCriterion[pdf_iter, inSample] = std
             par.printRoot(
-                "\t nSample %d mean dist = %.4f, std dist = %.4f"
-                % (nSample, mean, std)
+                f"\t nSample {nSample} mean dist = {mean:.4f}, std dist = {std:.4f}"
             )
 
         if pdf_iter == int(inpt["num_pdf_iter"]) - 1:
@@ -187,9 +185,7 @@ for pdf_iter in range(int(inpt["num_pdf_iter"])):
             if par.irank == par.iroot:
                 np.savez(
                     inpt["prefixDownsampledData"]
-                    + "_"
-                    + str(nSample)
-                    + ".npz",
+                    + f"_{nSample}.npz",
                     data=downSampledData,
                     indices=downSampledIndices,
                 )

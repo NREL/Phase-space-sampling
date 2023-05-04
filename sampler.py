@@ -36,12 +36,7 @@ def str2BigInt(str):
 def checkParamListLength(listToCheck, targetLength, name):
     if not len(listToCheck) == targetLength and (not len(listToCheck) == 1):
         par.printAll(
-            "Expected "
-            + name
-            + " of size "
-            + str(targetLength)
-            + " got "
-            + str(len(listToCheck))
+            f"Expected {name} of size {targetLength} got {len(listToCheck)}"
         )
         par.comm.Abort()
 
@@ -130,7 +125,7 @@ def makePytorchData(
 
 def prepareLog(pdf_iter):
     os.makedirs("TrainingLog", exist_ok=True)
-    filename = "TrainingLog/log_iter" + str(pdf_iter) + ".csv"
+    filename = f"TrainingLog/log_iter{pdf_iter}.csv"
     try:
         os.remove(filename)
     except:
@@ -142,9 +137,9 @@ def prepareLog(pdf_iter):
 
 
 def logTraining(step, loss, pdf_iter):
-    filename = "TrainingLog/log_iter" + str(pdf_iter) + ".csv"
+    filename = f"TrainingLog/log_iter{pdf_iter}.csv"
     f = open(filename, "a+")
-    f.write(str(int(step)) + ";" + str(loss.item()) + "\n")
+    f.write(f"{int(step)};{loss.item()}\n")
     f.close()
     return
 
@@ -232,7 +227,7 @@ def trainFlow(np_data, flow, pdf_iter, inpt):
 
     torch.save(
         flow.state_dict(),
-        "TrainingLog/modelWeights_iter" + str(pdf_iter) + ".pt",
+        f"TrainingLog/modelWeights_iter{pdf_iter}.pt",
     )
 
     # Timer
@@ -259,7 +254,7 @@ def trainBinPDF(np_data, pdf_iter, inpt):
 
     os.makedirs("TrainingLog", exist_ok=True)
     np.savez(
-        "TrainingLog/modelWeights_iter" + str(pdf_iter) + ".npz",
+        f"TrainingLog/modelWeights_iter{pdf_iter}.npz",
         edges=edges,
         logProb=logProb,
     )
@@ -358,7 +353,7 @@ def evalLogProbNF(flow, np_data_to_downsample, nFullData, pdf_iter, inpt):
     # Load trained flow
     flow.load_state_dict(
         torch.load(
-            "TrainingLog/modelWeights_iter" + str(pdf_iter) + ".pt",
+            f"TrainingLog/modelWeights_iter{pdf_iter}.pt",
             map_location=device,
         )
     )
@@ -410,7 +405,7 @@ def evalLogProbBIN(np_data_to_downsample, nFullData, pdf_iter, inpt):
     times = time.time()
 
     # Load trained PDF estimate
-    binPDF = np.load("TrainingLog/modelWeights_iter" + str(pdf_iter) + ".npz")
+    binPDF = np.load(f"TrainingLog/modelWeights_iter{pdf_iter}.npz")
     logProb = binPDF["logProb"]
     edges = binPDF["edges"]
 
@@ -561,8 +556,7 @@ def checkProcedure(meanCriterion, nSample, randomCriterion):
     errorSignal = False
     if meanCriterion[-1] < randomCriterion:
         par.printRoot(
-            "ERROR: Failure of the sampling procedure for nSample : "
-            + str(nSample)
+            f"ERROR: Failure of the sampling procedure for nSample : {nSample}"
         )
         errorSignal = True
     if errorSignal:
@@ -574,6 +568,5 @@ def checkProcedure(meanCriterion, nSample, randomCriterion):
         return
     if meanCriterion[-1] < meanCriterion[0]:
         par.printRoot(
-            "WARNING: Possible failure of the sampling procedure for nSample : "
-            + str(nSample)
+            f"WARNING: Possible failure of the sampling procedure for nSample : {nSample}"
         )
