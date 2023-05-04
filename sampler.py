@@ -117,7 +117,8 @@ def makePytorchData(
     pytorch_data = torch.from_numpy(np_data_rescaled).to(device)
     n_data_points = pytorch_data.data.shape[0]
     data_loader = DataLoader(
-        pytorch_data, batch_size=BATCH_SIZE, shuffle=shuffle
+        pytorch_data, batch_size=BATCH_SIZE, shuffle=shuffle,
+        generator=torch.Generator(device=device)
     )
     return data_loader
 
