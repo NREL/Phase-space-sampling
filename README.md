@@ -1,8 +1,8 @@
 # Phase-space sampling of large datasets
 
 ## Setup on Eagle HPC
-- Load the environment `/projects/pace/condaEnvs/pacePreprocess2`
-- Load the module `openmpi/4.0.4/gcc-8.4.0`
+1. `module load openmpi/4.1.0/gcc-8.4.0`
+2. `conda activate /projects/mluq/condaEnvs/uips`
 
 ## Installing UIPS
 
