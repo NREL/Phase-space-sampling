@@ -1,17 +1,21 @@
 # Phase-space sampling of large datasets
 
-## Requirements for running a job on Eagle HPC
+## Setup on Eagle HPC
 - Load the environment `/projects/pace/condaEnvs/pacePreprocess2`
 - Load the module `openmpi/4.0.4/gcc-8.4.0`
 
-## Requirements for personal laptop
-- Python v3.7.6
-- Pytorch v1.7.1
-- numpy v1.19.1
-- matplotlib v3.2.2
-- mpi4py v3.0.3
-- scikit-learn v0.21.0
-- openMPI v4.0.4
+## Installing UIPS
+
+### Option 1: From `conda` (recommended)
+
+1. `conda create --name uips python=3.10`
+2. `conda activate uips`
+3. `pip install -r requirements.txt`
+
+### Option 2: From `poetry`
+
+This requires [poetry](https://python-poetry.org/docs/#installation)
+1. `poetry update`
 
 ## Purpose
 
@@ -23,7 +27,7 @@ The purpose of the tool is to perform a smart downselection of a large number of
 
 ## Running the example with poetry
 
-To avoid package management yourself `bash run2D_poetry.sh`. This requires [poetry](https://python-poetry.org/docs/#installation)
+Add `poetry run` before `python ...`
 
 ## Parallelization
 
