@@ -100,12 +100,13 @@ def prepareData(inpt):
     par.printRoot("DONE!")
 
     # Parallel shuffling
+    dataInd_ = None
     if not preShuffled:
         if par.irank == par.iroot:
             print("SHUFFLE DATA ... ", end="")
             sys.stdout.flush()
 
-        data_to_downsample_, tags_ = par.parallel_shuffle_np(
+        data_to_downsample_, dataInd_, tags_ = par.parallel_shuffle_np(
             data_to_downsample_, nFullData
         )
         if nFullData < int(1e7):
@@ -119,4 +120,4 @@ def prepareData(inpt):
         data_to_downsample_, nWorkingData
     )
 
-    return data_to_downsample_, working_data, nFullData
+    return data_to_downsample_, dataInd_, working_data, nFullData

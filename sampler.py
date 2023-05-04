@@ -439,14 +439,18 @@ def evalLogProbBIN(np_data_to_downsample, nFullData, pdf_iter, inpt):
 
 def gatherDownsampledData(
     phaseSpaceSampledData_,
+    dataInd_,
     indexSelected_,
     nSample,
     nFullData,
     nSamplesAssigned,
 ):
-    nSnap_, starSnap_ = par.partitionData(nFullData)
+    nSnap_, startSnap_ = par.partitionData(nFullData)
     # Back to global indexing
-    indexSelected_ = np.array(indexSelected_).astype("int32") + starSnap_
+    if dataInd_ is None:
+        indexSelected_ = np.array(indexSelected_).astype("int32") + startSnap_
+    else:
+        indexSelected_ = dataInd_[indexSelected_]
     # Gather indices and data
     indexSelected = None
     indexSelected = par.gather1DArray(
@@ -465,6 +469,7 @@ def gatherDownsampledData(
 
 def downSample(
     data_to_downsample_,
+    dataInd_,
     log_density_np_,
     log_density_np_adjustment,
     nSample,
@@ -527,6 +532,7 @@ def downSample(
     # Gather
     phaseSpaceSampledData, indexDownsampledData = gatherDownsampledData(
         phaseSpaceSampledData_,
+        dataInd_,
         indexSelected_,
         nSample,
         nFullData,

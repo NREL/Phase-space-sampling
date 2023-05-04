@@ -72,7 +72,7 @@ np.random.seed(int(inpt["seed"]) + par.irank)
 # ~~~~ Prepare Data and scatter across processors
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-data_to_downsample_, working_data, nFullData = prepareData(inpt)
+data_to_downsample_, dataInd_, working_data, nFullData = prepareData(inpt)
 
 dim = data_to_downsample_.shape[1]
 
@@ -160,6 +160,7 @@ for pdf_iter in range(int(inpt["num_pdf_iter"])):
             log_samplingProb_,
         ) = sampler.downSample(
             data_to_downsample_,
+            dataInd_,
             log_density_np_,
             log_density_np_for_adjust,
             nSample,
@@ -203,6 +204,7 @@ for pdf_iter in range(int(inpt["num_pdf_iter"])):
             log_samplingProb_,
         ) = sampler.downSample(
             data_to_downsample_,
+            dataInd_,
             log_density_np_,
             log_density_np_for_adjust,
             nWorkingData,
