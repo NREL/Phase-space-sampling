@@ -322,22 +322,21 @@ def parallel_shuffle(A_):
         return newdata
 
     def odd_even_sort(data):
+        data.sort()
         for step in range(1, nProc + 1):
             if ((irank - 1 + step) % 2) == 0:
                 if irank - 1 < nProc - 1:
                     data = exchange(data, irank - 1, irank)
             elif irank - 1 > 0:
                 data = exchange(data, irank - 2, irank - 1)
-        data.sort()
-        return np.array([x for x, _ in data]), np.array([x for _, x in data])
+        return np.array([x for _, x in data])
 
     # Tag data with random numbers
     n_points = A_.shape[0]
     randomArray = np.random.uniform(size=n_points)
     Ashuffled_ = [(randomArray[i], A_[i]) for i in range(n_points)]
     # Sort by random num
-    indShuf, Ashuffled_ = odd_even_sort(Ashuffled_)
-    assert np.amin(np.diff(indShuf)) > 0
+    Ashuffled_ = odd_even_sort(Ashuffled_)
  
     return Ashuffled_
 
