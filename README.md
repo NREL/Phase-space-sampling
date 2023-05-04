@@ -6,8 +6,6 @@
 
 ## Installing UIPS
 
-You will need `openmpi`
-
 ### Option 1: From `conda` (recommended)
 
 1. `conda create --name uips python=3.10`
