@@ -39,11 +39,19 @@ if nWorkingDataAdjustment < 0:
 else:
     use_serial_adjustment = True
 # Data size used to learn the data probability
-nWorkingData = int(float(inpt["nWorkingData"]))
-if not nWorkingData in nSamples:
-    nSamples += [nWorkingData]
+nWorkingDatas = [int(float(n)) for n in inpt["nWorkingData"].split()]
+if len(nWorkingDatas) == 1:
+    nWorkingDatas = nWorkingDatas * int(inpt["num_pdf_iter"])
+for nWorkingData in nWorkingDatas:
+    if not nWorkingData in nSamples:
+        nSamples += [nWorkingData]
 # Do we compute the neighbor distance criterion
 computeCriterion = inpt["computeDistanceCriterion"] == "True"
+try:
+    nSampleCriterionLimit = int(inpt["nSampleCriterionLimit"])
+except:
+    nSampleCriterionLimit = int(1e5)
+
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # ~~~~ Environment
@@ -81,14 +89,15 @@ randomCriterion = np.zeros(len(nSamples))
 if par.irank == par.iroot and computeCriterion:
     par.printRoot("RANDOM: ")
     for inSample, nSample in enumerate(nSamples):
-        random_sampled_data = working_data[:nSample, :]
-        mean, std = sampler.computeDistanceToClosestNeighbor(
-            sampler.rescaleData(random_sampled_data, inpt)
-        )
-        randomCriterion[inSample] = mean
-        par.printRoot(
-            f"\t nSample {nSample} mean dist = {mean:.4f}, std dist = {std:.4f}"
-        )
+        if nSample <= nSampleCriterionLimit:
+            random_sampled_data = working_data[:nSample, :]
+            mean, std = sampler.computeDistanceToClosestNeighbor(
+                sampler.rescaleData(random_sampled_data, inpt)
+            )
+            randomCriterion[inSample] = mean
+            par.printRoot(
+                f"\t nSample {nSample} mean dist = {mean:.4f}, std dist = {std:.4f}"
+            )
 
 # Prepare arrays used for sanity checks
 meanCriterion = np.zeros((int(inpt["num_pdf_iter"]), len(nSamples)))
@@ -171,14 +180,15 @@ for pdf_iter in range(int(inpt["num_pdf_iter"])):
         # cornerPlotScatter(downSampledData,title='downSampled npts='+str(nSample)+', iter='+str(pdf_iter))
         # Get criterion
         if computeCriterion and par.irank == par.iroot:
-            mean, std = sampler.computeDistanceToClosestNeighbor(
-                sampler.rescaleData(downSampledData, inpt)
-            )
-            meanCriterion[pdf_iter, inSample] = mean
-            stdCriterion[pdf_iter, inSample] = std
-            par.printRoot(
-                f"\t nSample {nSample} mean dist = {mean:.4f}, std dist = {std:.4f}"
-            )
+            if nSample <= nSampleCriterionLimit:
+                mean, std = sampler.computeDistanceToClosestNeighbor(
+                    sampler.rescaleData(downSampledData, inpt)
+                )
+                meanCriterion[pdf_iter, inSample] = mean
+                stdCriterion[pdf_iter, inSample] = std
+                par.printRoot(
+                    f"\t nSample {nSample} mean dist = {mean:.4f}, std dist = {std:.4f}"
+                )
 
         if pdf_iter == int(inpt["num_pdf_iter"]) - 1:
             # Last pdf iter : Root proc saves downsampled data, and checks the outcome
@@ -206,7 +216,7 @@ for pdf_iter in range(int(inpt["num_pdf_iter"])):
             dataInd_,
             log_density_np_,
             log_density_np_for_adjust,
-            nWorkingData,
+            nWorkingDatas[pdf_iter + 1],
             nFullData,
             inpt,
         )

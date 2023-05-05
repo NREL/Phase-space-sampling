@@ -35,7 +35,9 @@ def prepareData(inpt):
     dataFile = inpt["dataFile"]
     preShuffled = inpt["preShuffled"] == "True"
     scalerFile = inpt["scalerFile"]
-    nWorkingData = int(float(inpt["nWorkingData"]))
+    nWorkingDatas = [int(float(n)) for n in inpt["nWorkingData"].split()]
+    if len(nWorkingDatas) == 1:
+        nWorkingDatas = nWorkingDatas * int(inpt["num_pdf_iter"])
     nWorkingDataAdjustment = int(float(inpt["nWorkingDataAdjustment"]))
 
     # Reduce Data
@@ -62,14 +64,15 @@ def prepareData(inpt):
         nDim = dataset.shape[1]
     if par.irank == par.iroot:
         useNF = inpt["pdf_method"].lower() == "normalizingflow"
-        checkData(
-            dataset.shape,
-            nFullData,
-            nDim,
-            nWorkingData,
-            nWorkingDataAdjustment,
-            useNF,
-        )
+        for nWorkingData in nWorkingDatas:
+            checkData(
+                dataset.shape,
+                nFullData,
+                nDim,
+                nWorkingData,
+                nWorkingDataAdjustment,
+                useNF,
+            )
 
     # Distribute dataset
     if par.irank == par.iroot:
@@ -117,7 +120,7 @@ def prepareData(inpt):
 
     # Get subsampled dataset to work with
     working_data = par.gatherNelementsInArray(
-        data_to_downsample_, nWorkingData
+        data_to_downsample_, nWorkingDatas[0]
     )
 
     return data_to_downsample_, dataInd_, working_data, nFullData
