@@ -64,15 +64,14 @@ def prepareData(inpt):
         nDim = dataset.shape[1]
     if par.irank == par.iroot:
         useNF = inpt["pdf_method"].lower() == "normalizingflow"
-        for nWorkingData in nWorkingDatas:
-            checkData(
-                dataset.shape,
-                nFullData,
-                nDim,
-                nWorkingData,
-                nWorkingDataAdjustment,
-                useNF,
-            )
+        checkData(
+            dataset.shape,
+            nFullData,
+            nDim,
+            nWorkingDatas[-1],
+            nWorkingDataAdjustment,
+            useNF,
+        )
 
     # Distribute dataset
     if par.irank == par.iroot:
