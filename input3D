@@ -15,7 +15,7 @@ nEpochs :			30 30
 # Batch size for normalizing flow training
 batch_size_train :		2048 2048
 # Subset of data on which training is done
-nWorkingData : 			2e5 
+nWorkingData : 			2e5 2e5
 # Subset of data used to adjust the sampling probability to the desired number of samples
 # If nWorkingDataAdjustment < 0, all data with the prescribed frequency is used
 nWorkingDataAdjustment :        -1
