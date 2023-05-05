@@ -63,9 +63,12 @@ inpt = myparser.parseInputFile()
 # List of sample size
 nSamples = [int(float(n)) for n in inpt["nSamples"].split()]
 # Data size used to learn the data probability
-nWorkingData = int(float(inpt["nWorkingData"]))
-if not nWorkingData in nSamples:
-    nSamples += [nWorkingData]
+nWorkingDatas = [int(float(n)) for n in inpt["nWorkingData"].split()]
+if len(nWorkingDatas) == 1:
+    nWorkingDatas = nWorkingDatas * int(inpt["num_pdf_iter"])
+for nWorkingData in nWorkingDatas:
+    if not nWorkingData in nSamples:
+        nSamples += [nWorkingData]
 # Data file name
 fullDataFile = inpt["dataFile"]
 # Scaler file name
