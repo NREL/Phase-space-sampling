@@ -41,7 +41,7 @@ else:
 # Data size used to learn the data probability
 nWorkingDatas = [int(float(n)) for n in inpt["nWorkingData"].split()]
 if len(nWorkingDatas) == 1:
-    nWorkingDatas = nWorkingDatas * int(inpt["num_pdf_iter"]) 
+    nWorkingDatas = nWorkingDatas * int(inpt["num_pdf_iter"])
 for nWorkingData in nWorkingDatas:
     if not nWorkingData in nSamples:
         nSamples += [nWorkingData]
@@ -89,7 +89,7 @@ randomCriterion = np.zeros(len(nSamples))
 if par.irank == par.iroot and computeCriterion:
     par.printRoot("RANDOM: ")
     for inSample, nSample in enumerate(nSamples):
-        if nSample <= nSampleCriterionLimit: 
+        if nSample <= nSampleCriterionLimit:
             random_sampled_data = working_data[:nSample, :]
             mean, std = sampler.computeDistanceToClosestNeighbor(
                 sampler.rescaleData(random_sampled_data, inpt)
@@ -180,7 +180,7 @@ for pdf_iter in range(int(inpt["num_pdf_iter"])):
         # cornerPlotScatter(downSampledData,title='downSampled npts='+str(nSample)+', iter='+str(pdf_iter))
         # Get criterion
         if computeCriterion and par.irank == par.iroot:
-            if nSample <= nSampleCriterionLimit: 
+            if nSample <= nSampleCriterionLimit:
                 mean, std = sampler.computeDistanceToClosestNeighbor(
                     sampler.rescaleData(downSampledData, inpt)
                 )
@@ -216,7 +216,7 @@ for pdf_iter in range(int(inpt["num_pdf_iter"])):
             dataInd_,
             log_density_np_,
             log_density_np_for_adjust,
-            nWorkingDatas[pdf_iter+1],
+            nWorkingDatas[pdf_iter + 1],
             nFullData,
             inpt,
         )
