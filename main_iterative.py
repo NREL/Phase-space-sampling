@@ -192,17 +192,17 @@ for pdf_iter in range(int(inpt["num_pdf_iter"])):
 
         if pdf_iter == int(inpt["num_pdf_iter"]) - 1:
             # Last pdf iter : Root proc saves downsampled data, and checks the outcome
-            if par.irank == par.iroot:
-                np.savez(
-                    inpt["prefixDownsampledData"] + f"_{nSample}.npz",
-                    data=downSampledData,
-                    indices=downSampledIndices,
-                )
-                sampler.checkProcedure(
-                    meanCriterion[:, inSample],
-                    nSample,
-                    randomCriterion[inSample],
-                )
+            sampler.checkProcedure(
+                meanCriterion[:, inSample],
+                nSample,
+                randomCriterion[inSample],
+            )
+        if par.irank == par.iroot:
+            np.savez(
+                f"{inpt['prefixDownsampledData']}_{nSample}_it{pdf_iter}.npz",
+                data=downSampledData,
+                indices=downSampledIndices,
+            )
 
     if not (pdf_iter == int(inpt["num_pdf_iter"]) - 1):
         # Prepare data for the next training iteration
