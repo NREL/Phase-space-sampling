@@ -94,20 +94,22 @@ fieldNames = ["feature" + str(i) for i in range(fullData.shape[1])]
 figureFolder = "Figures"
 os.makedirs(figureFolder, exist_ok=True)
 
-for nSample in nSamples:
-    print("plot nSample : %d" % (nSample) + " ... ", end="")
-    sys.stdout.flush()
-    dataFile = inpt["prefixDownsampledData"] + "_" + str(nSample) + ".npz"
-    downSampledData = np.load(dataFile)["data"]
-    plotScatterProjection(downSampledData, fullData, fieldNames, lims)
-    plt.savefig(
-        figureFolder
-        + "/"
-        + inpt["prefixDownsampledData"]
-        + "_"
-        + str(nSample)
-        + ".png"
-    )
-    plt.close()
-    print("DONE!")
-    sys.stdout.flush()
+for pdf_iter in range(int(inpt["num_pdf_iter"])): 
+    print(f"Iter : {pdf_iter}")
+    for nSample in nSamples:
+        print(f"\tplot nSample : {nSample} ... ", end="")
+        sys.stdout.flush()
+        dataFile = f"{inpt['prefixDownsampledData']}_{nSample}_it{pdf_iter}.npz"
+        downSampledData = np.load(dataFile)["data"]
+        plotScatterProjection(downSampledData, fullData, fieldNames, lims)
+        plt.savefig(
+            figureFolder
+            + "/"
+            + inpt["prefixDownsampledData"]
+            + "_"
+            + str(nSample)
+            + ".png"
+        )
+        plt.close()
+        print("DONE!")
+        sys.stdout.flush()
