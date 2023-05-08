@@ -222,6 +222,18 @@ for pdf_iter in range(int(inpt["num_pdf_iter"])):
         )
         data_for_pdf_est = downSampledData
 
+# Advise for best sampling
+if par.irank == par.iroot:
+    if np.amax(meanCriterion) > 0:
+        print("\n")
+        maxCrit = np.argmax(meanCriterion, axis=0)
+        nSamples_asked = [int(float(n)) for n in inpt["nSamples"].split()]
+        for iSample, nSample in enumerate(nSamples_asked):
+            print(
+                f"For sample {nSample} use {inpt['prefixDownsampledData']}_{nSample}_it{maxCrit[iSample]}.npz"
+            )
+        print("\n")
+
 
 # if par.irank==par.iroot:
 #    plt.show()
