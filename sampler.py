@@ -263,7 +263,7 @@ def trainBinPDF(np_data, pdf_iter, inpt):
     timee = time.time()
     printTiming = inpt["printTiming"] == "True"
     if printTiming:
-        par.printRoot("Time Train : %.2f" % (timee - times))
+        par.printRoot(f"Time Train : {timee - times:.2f}")
 
     return logProb, edges
 
@@ -430,7 +430,7 @@ def evalLogProbBIN(np_data_to_downsample, nFullData, pdf_iter, inpt):
     timee = time.time()
     printTiming = inpt["printTiming"] == "True"
     if printTiming:
-        par.printRoot("Time Eval : %.2f" % (par.allmaxScalar(timee - times)))
+        par.printRoot(f"Time Eval : {par.allmaxScalar(timee - times):.2f}")
 
     return log_density_np
 

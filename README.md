@@ -4,7 +4,7 @@
 1. `module load openmpi/4.1.0/gcc-8.4.0`
 2. `conda activate /projects/mluq/condaEnvs/uips`
 
-## Installing UIPS
+## Installing
 
 ### Option 1: From `conda` (recommended)
 
