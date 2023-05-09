@@ -7,7 +7,7 @@ on:
      branches: [master]
 
 jobs:
-  PINN:
+  UIPS:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -17,17 +17,14 @@ jobs:
       run:
         working-directory: ${{github.workspace}}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Setup Python
-        uses: actions/setup-python@v4
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
         with:
           python-version: ${{matrix.python-version}}
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          python -m pip install black
-          python -m pip install isort
+      - name: Install Black
+        run: pip install black
+      - name: Install isort
+        run: pip install isort
       - name: Formatting and sorting import
         run: |
           source .github/linters/formatting.sh
