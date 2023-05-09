@@ -4,3 +4,5 @@ matplotlib
 mpi4py
 scikit-learn
 imageio
+black
+isort

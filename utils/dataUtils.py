@@ -90,7 +90,11 @@ def prepareData(inpt):
             startSnap_ : startSnap_ + nSnap_, :nDim
         ].astype("float32")
     else:
-        data_to_downsample_ = np.take(dataset[startSnap_ : startSnap_ + nSnap_], np.array(dimList), axis=1).astype("float32")
+        data_to_downsample_ = np.take(
+            dataset[startSnap_ : startSnap_ + nSnap_],
+            np.array(dimList),
+            axis=1,
+        ).astype("float32")
     par.printRoot("DONE!")
 
     # Rescale data
