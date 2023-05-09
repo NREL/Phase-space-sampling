@@ -37,3 +37,9 @@ jobs:
           source .github/linters/formatting.sh
           format *.py true
           format utils true
+      - name: Run serial test
+        run: |
+          python main_iterative.py tests/input_test
+      - name: Run parallel test
+        run: |
+          mpiexec -np 2 python main_iterative.py tests/input_test
