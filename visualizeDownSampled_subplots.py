@@ -81,8 +81,10 @@ print("LOAD DATA ... ", end="")
 sys.stdout.flush()
 fullData = np.load(fullDataFile)
 print("DONE!")
-mins = np.load(scalerFile)["minVal"]
-maxs = np.load(scalerFile)["maxVal"]
+mins = np.amin(fullData, axis=0)
+maxs = np.amax(fullData, axis=0)
+# mins = np.load(scalerFile)["minVal"]
+# maxs = np.load(scalerFile)["maxVal"]
 lims = [
     (xmin - 0.05 * (xmax - xmin), xmax + 0.05 * (xmax - xmin))
     for xmin, xmax in zip(mins, maxs)
@@ -102,7 +104,7 @@ for pdf_iter in range(int(inpt["num_pdf_iter"])):
         dataFile = (
             f"{inpt['prefixDownsampledData']}_{nSample}_it{pdf_iter}.npz"
         )
-        downSampledData = np.load(dataFile)["data"]
+        downSampledData = fullData[np.load(dataFile)["indices"], :]
         plotScatterProjection(downSampledData, fullData, fieldNames, lims)
         plt.savefig(
             figureFolder
