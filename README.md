@@ -1,10 +1,10 @@
 # Phase-space sampling of large datasets
 
-## Setup on Eagle HPC
+## Installation for NREL HPC users
 1. `module load openmpi/4.1.0/gcc-8.4.0`
 2. `conda activate /projects/mluq/condaEnvs/uips`
 
-## Installing
+## Installation for other users
 
 ### Option 1: From `conda` (recommended)
 
