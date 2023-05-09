@@ -42,6 +42,10 @@ def prepareData(inpt):
 
     # Reduce Data
     try:
+        dimList = [int(n) for n in inpt["dimList"].split()]
+    except:
+        dimList = None
+    try:
         nDimReduced = int(float(inpt["nDimReduced"]))
     except:
         nDimReduced = -1
@@ -58,7 +62,9 @@ def prepareData(inpt):
         nFullData = min(dataset.shape[0], nDatReduced)
     else:
         nFullData = dataset.shape[0]
-    if nDimReduced > 0:
+    if dimList is not None:
+        nDim = min(dataset.shape[1], len(dimList))
+    elif nDimReduced > 0:
         nDim = min(dataset.shape[1], nDimReduced)
     else:
         nDim = dataset.shape[1]
@@ -79,9 +85,12 @@ def prepareData(inpt):
         sys.stdout.flush()
     par.comm.Barrier()
     nSnap_, startSnap_ = par.partitionData(nFullData)
-    data_to_downsample_ = dataset[
-        startSnap_ : startSnap_ + nSnap_, :nDim
-    ].astype("float32")
+    if dimList is None:
+        data_to_downsample_ = dataset[
+            startSnap_ : startSnap_ + nSnap_, :nDim
+        ].astype("float32")
+    else:
+        data_to_downsample_ = np.take(dataset[startSnap_ : startSnap_ + nSnap_], np.array(dimList), axis=1).astype("float32")
     par.printRoot("DONE!")
 
     # Rescale data
