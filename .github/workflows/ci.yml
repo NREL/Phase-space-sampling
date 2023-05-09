@@ -18,12 +18,16 @@ jobs:
       run:
         working-directory: ${{github.workspace}}
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
-      - uses: mpi4py/setup-mpi@v1
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup Python
+        uses: actions/setup-python@v4
         with:
           python-version: ${{matrix.python-version}}
-          mpi: ${{matrix.mpi}}
+      - name: Setup MPI
+        uses: mpi4py/setup-mpi@v1
+        with:
+          mpi: ${{ matrix.mpi }}
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
@@ -36,4 +40,4 @@ jobs:
       - name: Run pytest
         run: |
           python main_iterative.py tests/input_test
-          mpiexec -np 4 python main_iterative.py tests/input_test
+          mpiexec -np 2 python main_iterative.py tests/input_test
