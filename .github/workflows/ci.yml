@@ -37,9 +37,12 @@ jobs:
           source .github/linters/formatting.sh
           format *.py true
           format utils true
-      - name: Run serial test
+      - name: Normalizing flow test
         run: |
           python main_iterative.py tests/input_test
-      - name: Run parallel test
+      - name: Bins test
+        run: |
+          python main_iterative.py tests/input_test_bins
+      - name: Parallel normalizing flow test
         run: |
           mpiexec -np 2 python main_iterative.py tests/input_test

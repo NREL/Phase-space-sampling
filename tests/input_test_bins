@@ -3,7 +3,7 @@
 ! ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ !
 # Number of repetitions for the probability map estimation (keep at 2)
 num_pdf_iter : 2
-pdf_method : NormalizingFlow
+pdf_method : bins
 
 
 ! ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ !
@@ -26,13 +26,10 @@ learning_rate : 		2e-4 2e-4
 use_gpu :                       False
 
 ! ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ !
-! ~~~~ Normalizing flow architecture
+! ~~~~ Bin PDF architecture
 ! ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ !
 
-nCouplingLayer :		 2  2  
-num_bins : 			 4  8
-hidden_features :		12 12 
-num_blocks :			 3  3
+num_pdf_bins : 			 100
 
 ! ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ !
 ! ~~~~ Density evaluation

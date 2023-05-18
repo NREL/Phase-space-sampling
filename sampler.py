@@ -235,7 +235,7 @@ def trainFlow(np_data, flow, pdf_iter, inpt):
     timee = time.time()
     printTiming = inpt["printTiming"] == "True"
     if printTiming:
-        par.printRoot("Time Train : %.2f" % (timee - times))
+        par.printRoot(f"Time Train : {timee - times:.2f}s")
 
     last_loss = loss.item()
 
@@ -249,7 +249,7 @@ def trainBinPDF(np_data, pdf_iter, inpt):
         return None, None
     # Train
     np_data_rescaled = rescaleData(np_data, inpt)
-    H, edges = np.histogramdd(np_data_rescaled, bins=int(inpt["num_bins"]))
+    H, edges = np.histogramdd(np_data_rescaled, bins=int(inpt["num_pdf_bins"]))
     logProb = np.log(1e-16 + H / np.sum(H))
 
     os.makedirs("TrainingLog", exist_ok=True)
@@ -263,7 +263,7 @@ def trainBinPDF(np_data, pdf_iter, inpt):
     timee = time.time()
     printTiming = inpt["printTiming"] == "True"
     if printTiming:
-        par.printRoot(f"Time Train : {timee - times:.2f}")
+        par.printRoot(f"Time Train : {timee - times:.2f}s")
 
     return logProb, edges
 
@@ -390,7 +390,7 @@ def evalLogProbNF(flow, np_data_to_downsample, nFullData, pdf_iter, inpt):
     timee = time.time()
     printTiming = inpt["printTiming"] == "True"
     if printTiming:
-        par.printRoot("Time Eval : %.2f" % (par.allmaxScalar(timee - times)))
+        par.printRoot(f"Time Eval : {par.allmaxScalar(timee - times):.2f}s")
 
     return log_density_np
 
@@ -430,7 +430,7 @@ def evalLogProbBIN(np_data_to_downsample, nFullData, pdf_iter, inpt):
     timee = time.time()
     printTiming = inpt["printTiming"] == "True"
     if printTiming:
-        par.printRoot(f"Time Eval : {par.allmaxScalar(timee - times):.2f}")
+        par.printRoot(f"Time Eval : {par.allmaxScalar(timee - times):.2f}s")
 
     return log_density_np
 
