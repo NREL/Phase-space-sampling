@@ -127,7 +127,7 @@ for pdf_iter in range(int(inpt["num_pdf_iter"])):
 
         # Evaluate probability: This is the expensive step (happens on multi processors)
         log_density_np_ = sampler.evalLogProbNF(
-            flow, data_to_downsample_, nFullData, pdf_iter, inpt
+            flow, data_to_downsample_, pdf_iter, inpt
         )
 
     if use_bins:
@@ -136,7 +136,7 @@ for pdf_iter in range(int(inpt["num_pdf_iter"])):
         )
         # Evaluate probability: This is the expensive step (happens on multi processors)
         log_density_np_ = sampler.evalLogProbBIN(
-            data_to_downsample_, nFullData, pdf_iter, inpt
+            data_to_downsample_, pdf_iter, inpt
         )
 
     if use_serial_adjustment:

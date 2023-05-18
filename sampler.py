@@ -338,7 +338,7 @@ def adjustLogSamplingProbMultPar(logSamplingProb_, nDownSamples, nFullSample):
     return factor
 
 
-def evalLogProbNF(flow, np_data_to_downsample, nFullData, pdf_iter, inpt):
+def evalLogProbNF(flow, np_data_to_downsample, pdf_iter, inpt):
     # Wait for root to be done with training
     par.comm.barrier()
 
@@ -395,7 +395,7 @@ def evalLogProbNF(flow, np_data_to_downsample, nFullData, pdf_iter, inpt):
     return log_density_np
 
 
-def evalLogProbBIN(np_data_to_downsample, nFullData, pdf_iter, inpt):
+def evalLogProbBIN(np_data_to_downsample, pdf_iter, inpt):
     # Wait for root to be done with training
     par.comm.barrier()
 
