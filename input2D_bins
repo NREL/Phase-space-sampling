@@ -10,7 +10,7 @@ pdf_method : bins
 ! ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ !
 
 # Number of bins per dims
-num_bins : 	100
+num_pdf_bins : 	100
 # Subset of data on which training is done
 nWorkingData : 			1e5
 # Subset of data used to adjust the sampling probability to the desired number of samples

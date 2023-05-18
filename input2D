@@ -7,7 +7,7 @@ pdf_method : NormalizingFlow
 
 
 ! ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ !
-! ~~~~ Normalizing flow training
+! ~~~~ Density estimation training
 ! ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ !
 
 # Number of epochs for each normalizing flow training
