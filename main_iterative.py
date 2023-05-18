@@ -12,7 +12,6 @@ import time
 import myparser
 import parallel as par
 from dataUtils import prepareData
-from myProgressBar import printProgressBar
 from plotFun import *
 
 import sampler
