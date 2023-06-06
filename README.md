@@ -1,4 +1,4 @@
-# Phase-space sampling of large datasets
+# Phase-space sampling of large datasets [![UIPS-CI](https://github.com/NREL/Phase-space-sampling/actions/workflows/ci.yml/badge.svg)](https://github.com/NREL/Phase-space-sampling/actions/workflows/ci.yml)
 
 ## Installation for NREL HPC users
 1. `module load openmpi/4.1.0/gcc-8.4.0`
