@@ -7,11 +7,24 @@ import numpy as np
 from prettyPlot.parser import parse_input_file
 from prettyPlot.plotting import pretty_labels
 
+import argparse
+parser = argparse.ArgumentParser(description="Loss plotting")
+parser.add_argument(
+    "-i",
+    "--input",
+    type=str,
+    metavar="",
+    required=False,
+    help="Input file",
+    default="input",
+)
+args, unknown = parser.parse_known_args()
+
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # ~~~~ Parse input
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-inpt = parse_input_file()
+inpt = parse_input_file(args.input)
 
 
 if inpt["pdf_method"].lower() == "normalizingflow": 

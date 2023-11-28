@@ -48,12 +48,24 @@ def plotScatterProjection(data, fullData, fieldNames, lims):
             tick.set_rotation(33)
         ax.set_ylim(lims[1])
 
+import argparse
+parser = argparse.ArgumentParser(description="Visualize downsampled data")
+parser.add_argument(
+    "-i",
+    "--input",
+    type=str,
+    metavar="",
+    required=False,
+    help="Input file",
+    default="input",
+)
+args, unknown = parser.parse_known_args()
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # ~~~~ Parse input
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-inpt = parse_input_file()
+inpt = parse_input_file(args.input)
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # ~~~~ Parameters to save

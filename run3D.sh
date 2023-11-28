@@ -1,9 +1,9 @@
 # Run the downsampling script
-mpiexec -np 4 python main_iterative.py input3D
+mpiexec -np 4 python main_iterative.py -i input3D
 
 # Plot the loss
-python plotLoss.py input3D
+python plotLoss.py -i input3D
 
 # Plot the sampling results
-python visualizeDownSampled_subplots.py input3D
+python visualizeDownSampled_subplots.py -i input3D
 
