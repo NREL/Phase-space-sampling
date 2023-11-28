@@ -1,3 +1,4 @@
+openmpi
 torch
 numpy
 mpi4py

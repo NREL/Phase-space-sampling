@@ -10,8 +10,7 @@
 
 1. `conda create --name uips python=3.10`
 2. `conda activate uips`
-3. `conda install openmpi`
-4. `pip install -r requirements.txt`
+3. `pip install -r requirements.txt`
 
 ### Option 2: From `poetry`
 

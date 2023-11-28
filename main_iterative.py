@@ -7,6 +7,7 @@ import torch
 # import matplotlib.pyplot as plt
 
 sys.path.append("utils")
+import argparse
 import time
 
 import parallel as par
@@ -17,7 +18,6 @@ from prettyPlot.parser import parse_input_file
 import sampler
 import utils
 
-import argparse
 parser = argparse.ArgumentParser(description="Downsampler")
 parser.add_argument(
     "-i",
