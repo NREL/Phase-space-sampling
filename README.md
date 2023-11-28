@@ -10,8 +10,7 @@
 
 1. `conda create --name uips python=3.10`
 2. `conda activate uips`
-3. `conda install openmpi`
-4. `pip install -r requirements.txt`
+3. `pip install -r requirements.txt`
 
 ### Option 2: From `poetry`
 
@@ -20,7 +19,7 @@ This requires [poetry](https://python-poetry.org/docs/#installation)
 
 ## Purpose
 
-The purpose of the tool is to perform a smart downselection of a large number of datapoints. Typically, large numerical simulations generate billions, or even trillions of datapoints. However, there may be redundancy in the dataset which unecessarily constrains memory and computing requirements. Here, redundancy is defined as closeness in feature space. The method is called phase-space sampling.
+The purpose of the tool is to perform a smart downselection of a large number of datapoints. Typically, large numerical simulations generate billions, or even trillions of datapoints. However, there may be redundancy in the dataset which unnecessarily constrains memory and computing requirements. Here, redundancy is defined as closeness in feature space. The method is called phase-space sampling.
 
 ## Running the example without poetry
 

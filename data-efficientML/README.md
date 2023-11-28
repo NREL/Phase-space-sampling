@@ -4,7 +4,7 @@ This folder is NOT necessary for using the phase-space sampling package. It only
 Uniform-in-phase-space data-selection with iterative normalizing flows, Under review.
 
 # Data
-The folder `data/` contains the phase space sampled data for five independent runs of each case described in the paper aforementionned. To run all the codes and reproduce the results, the file `fullData.npy` is necessary. Due to space constraints it is not in the repository but is available upon request.
+The folder `data/` contains the phase space sampled data for five independent runs of each case described in the paper aforementioned. To run all the codes and reproduce the results, the file `fullData.npy` is necessary. Due to space constraints it is not in the repository but is available upon request.
 
 
 # Usage

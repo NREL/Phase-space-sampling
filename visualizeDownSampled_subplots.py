@@ -48,6 +48,8 @@ def plotScatterProjection(data, fullData, fieldNames, lims):
             tick.set_rotation(33)
         ax.set_ylim(lims[1])
 
+    plt.tight_layout() 
+
 import argparse
 parser = argparse.ArgumentParser(description="Visualize downsampled data")
 parser.add_argument(
@@ -118,12 +120,7 @@ for pdf_iter in range(int(inpt["num_pdf_iter"])):
         downSampledData = fullData[np.load(dataFile)["indices"], :]
         plotScatterProjection(downSampledData, fullData, fieldNames, lims)
         plt.savefig(
-            figureFolder
-            + "/"
-            + inpt["prefixDownsampledData"]
-            + "_"
-            + str(nSample)
-            + ".png"
+            os.path.join(figureFolder, f"{inpt['prefixDownsampledData']}_{nSample}_it{pdf_iter}.png")
         )
         plt.close()
         print("DONE!")
