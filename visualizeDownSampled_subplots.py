@@ -2,13 +2,12 @@ import sys
 
 import numpy as np
 
-sys.path.append("utils")
 import os
 
 import matplotlib.pyplot as plt
-import myparser
 from mpl_toolkits.axes_grid1 import make_axes_locatable
-from plotsUtil import *
+from prettyPlot.plotting import pretty_labels
+from prettyPlot.parser import parse_input_file
 
 
 def plotScatterProjection(data, fullData, fieldNames, lims):
@@ -43,18 +42,30 @@ def plotScatterProjection(data, fullData, fieldNames, lims):
         plt.scatter(fullData[:, 0], fullData[:, 1], color="gray", s=0.2)
         plt.scatter(data[:, 0], data[:, 1], color="blue", s=0.2)
         ax = plt.gca()
-        axprettyLabels(ax, fieldNames[0], fieldNames[1], 14)
+        pretty_labels(fieldNames[0], fieldNames[1], 14, ax=ax)
         ax.set_xlim(lims[0])
         for tick in ax.get_xticklabels():
             tick.set_rotation(33)
         ax.set_ylim(lims[1])
 
+import argparse
+parser = argparse.ArgumentParser(description="Visualize downsampled data")
+parser.add_argument(
+    "-i",
+    "--input",
+    type=str,
+    metavar="",
+    required=False,
+    help="Input file",
+    default="input",
+)
+args, unknown = parser.parse_known_args()
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # ~~~~ Parse input
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-inpt = myparser.parseInputFile()
+inpt = parse_input_file(args.input)
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # ~~~~ Parameters to save

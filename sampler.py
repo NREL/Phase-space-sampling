@@ -13,7 +13,7 @@ import time
 
 import parallel as par
 from flowUtils import *
-from myProgressBar import printProgressBar
+from prettyPlot.progressBar import print_progress_bar
 from sklearn.neighbors import NearestNeighbors
 
 import nn as nn_
@@ -190,12 +190,13 @@ def trainFlow(np_data, flow, pdf_iter, inpt):
     totalSteps = nBatch * EPOCHS
     # Init log
     prepareLog(pdf_iter)
-    printProgressBar(
+    print_progress_bar(
         0,
         totalSteps,
         prefix="Loss = ? Step %d / %d " % (0, totalSteps),
         suffix="Complete",
         length=50,
+        extraCond=(par.irank==par.iroot),
     )
     for epoch in range(EPOCHS):
         for step, batch in enumerate(data_loader):
@@ -209,13 +210,14 @@ def trainFlow(np_data, flow, pdf_iter, inpt):
             optimizer.step()
             scheduler.step()
 
-            printProgressBar(
+            print_progress_bar(
                 epoch * nBatch + step + 1,
                 totalSteps,
                 prefix="Loss %.4f Step %d / %d "
                 % (loss.item(), epoch * nBatch + step + 1, totalSteps),
                 suffix="Complete",
                 length=50,
+                extraCond=(par.irank==par.iroot),
             )
             if ((epoch * nBatch + step + 1) % 10) == 0:
                 logTraining(epoch * nBatch + step + 1, loss, pdf_iter)
@@ -365,12 +367,13 @@ def evalLogProbNF(flow, np_data_to_downsample, pdf_iter, inpt):
         np_data_to_downsample, BATCH_SIZE, inpt, shuffle=False
     )
     nBatch = len(to_downsample_loader)
-    printProgressBar(
+    print_progress_bar(
         0,
         nBatch,
         prefix="Eval Step %d / %d " % (0, nBatch),
         suffix="Complete",
         length=50,
+        extraCond=(par.irank==par.iroot),
     )
     for step, batch in enumerate(to_downsample_loader):
         batch = batch.to(device)
@@ -378,12 +381,13 @@ def evalLogProbNF(flow, np_data_to_downsample, pdf_iter, inpt):
         log_density_np = np.concatenate(
             (log_density_np, utils.tensor2numpy(log_density))
         )
-        printProgressBar(
+        print_progress_bar(
             step + 1,
             nBatch,
             prefix="Eval Step %d / %d " % (step + 1, nBatch),
             suffix="Complete",
             length=50,
+            extraCond=(par.irank==par.iroot),
         )
 
     # Timer

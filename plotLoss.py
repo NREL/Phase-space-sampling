@@ -4,15 +4,27 @@ import sys
 import matplotlib.pyplot as plt
 import numpy as np
 
-sys.path.append("utils")
-import myparser
-from plotsUtil import *
+from prettyPlot.parser import parse_input_file
+from prettyPlot.plotting import pretty_labels
+
+import argparse
+parser = argparse.ArgumentParser(description="Loss plotting")
+parser.add_argument(
+    "-i",
+    "--input",
+    type=str,
+    metavar="",
+    required=False,
+    help="Input file",
+    default="input",
+)
+args, unknown = parser.parse_known_args()
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # ~~~~ Parse input
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-inpt = myparser.parseInputFile()
+inpt = parse_input_file(args.input)
 
 
 if inpt["pdf_method"].lower() == "normalizingflow": 
@@ -28,14 +40,14 @@ if inpt["pdf_method"].lower() == "normalizingflow":
                 f"TrainingLog/log_iter{i}.csv", delimiter=";", skip_header=1
             )
             axs[i].plot(Loss[:, 0], Loss[:, 1], color="k", linewidth=3)
-            axprettyLabels(axs[i], "Step", "Loss", 14, title=f"iteration {i}")
+            pretty_labels("Step", "Loss", 14, title=f"iteration {i}", ax=axs[i])
     else:
         fig = plt.figure()
         Loss = np.genfromtxt(
             f"TrainingLog/log_iter0.csv", delimiter=";", skip_header=1
         )
         plt.plot(Loss[:, 0], Loss[:, 1], color="k", linewidth=3)
-        prettyLabels("Step", "Loss", 14, title=f"iteration 0")
+        pretty_labels("Step", "Loss", 14, title=f"iteration 0")
     
     plt.savefig(figureFolder + "/loss.png")
     plt.close()

@@ -1,7 +1,7 @@
 import numpy as np
 import parallel as par
 from matplotlib import cm
-from plotsUtil import *
+from prettyPlot.plotting import plt, pretty_labels
 
 
 def cornerPlotScatter(data, title=None):
@@ -16,11 +16,11 @@ def cornerPlotScatter(data, title=None):
                 axs[idim, jdim - 1].plot(
                     data[:, idim], data[:, jdim], "o", markersize=0.5
                 )
-                axprettyLabels(
-                    axs[idim, jdim - 1],
+                pretty_labels(
                     "feat" + str(idim),
                     "feat" + str(jdim),
                     10,
+                    ax=axs[idim, jdim - 1],
                 )
         if not title == None:
             fig.suptitle(
@@ -32,7 +32,7 @@ def cornerPlotScatter(data, title=None):
     elif nDim == 2:
         fig = plt.figure()
         plt.plot(data[:, 0], data[:, 1], "o", markersize=0.5)
-        prettyLabels("feat" + str(0), "feat" + str(1), 10, title=title)
+        pretty_labels("feat" + str(0), "feat" + str(1), 10, title=title)
 
 
 def cornerPlotScatterColor(data, colorData):
@@ -52,11 +52,11 @@ def cornerPlotScatterColor(data, colorData):
                     cmap=cm.gray_r,
                     alpha=0.9,
                 )
-                axprettyLabels(
-                    axs[idim, jdim - 1],
+                pretty_labels(
                     "feat" + str(idim),
                     "feat" + str(jdim),
                     10,
+                    ax=axs[idim, jdim - 1],
                 )
     elif nDim == 2:
         fig = plt.figure()
@@ -68,5 +68,5 @@ def cornerPlotScatterColor(data, colorData):
             cmap=cm.gray_r,
             alpha=0.9,
         )
-        prettyLabels("feat" + str(0), "feat" + str(1), 10)
+        pretty_labels("feat" + str(0), "feat" + str(1), 10)
         plt.colorbar()

@@ -39,10 +39,10 @@ jobs:
           format utils true
       - name: Normalizing flow test
         run: |
-          python main_iterative.py tests/input_test
+          python main_iterative.py -i tests/input_test
       - name: Bins test
         run: |
-          python main_iterative.py tests/input_test_bins
+          python main_iterative.py -i tests/input_test_bins
       - name: Parallel normalizing flow test
         run: |
-          mpiexec -np 2 python main_iterative.py tests/input_test
+          mpiexec -np 2 python main_iterative.py -i tests/input_test

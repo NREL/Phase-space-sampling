@@ -9,19 +9,32 @@ import torch
 sys.path.append("utils")
 import time
 
-import myparser
 import parallel as par
 from dataUtils import prepareData
 from plotFun import *
+from prettyPlot.parser import parse_input_file
 
 import sampler
 import utils
+
+import argparse
+parser = argparse.ArgumentParser(description="Downsampler")
+parser.add_argument(
+    "-i",
+    "--input",
+    type=str,
+    metavar="",
+    required=False,
+    help="Input file",
+    default="input",
+)
+args, unknown = parser.parse_known_args()
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # ~~~~ Parse input
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-inpt = myparser.parseInputFile()
+inpt = parse_input_file(args.input)
 use_normalizing_flow = inpt["pdf_method"].lower() == "normalizingflow"
 use_bins = inpt["pdf_method"].lower() == "bins"
 
