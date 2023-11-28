@@ -7,12 +7,11 @@ sys.path.append("util")
 import os
 import warnings
 
-from myProgressBar import printProgressBar
-from plotsUtil import *
 from sklearn.gaussian_process.kernels import RBF
 from sklearn.gaussian_process.kernels import ConstantKernel as C
 from sklearn.gaussian_process.kernels import WhiteKernel
-
+from prettyPlot.progressBar import print_progress_bar
+from parallel import irank, iroot
 
 def partitionData(nData, nBatch):
     # ~~~~ Partition the data across batches
@@ -38,23 +37,25 @@ def getPrediction(gpr, data):
     ApproxBatchSize = 10000
     nBatch = max(int(round(nPoints / ApproxBatchSize)), 1)
     nData_b, startData_b = partitionData(nPoints, nBatch)
-    printProgressBar(
+    print_progress_bar(
         0,
         nBatch,
         prefix="Get prob " + str(0) + " / " + str(nBatch),
         suffix="Complete",
         length=50,
+        extraCond=(irank==iroot),
     )
     for ibatch in range(nBatch):
         start_ = startData_b[ibatch]
         end_ = startData_b[ibatch] + nData_b[ibatch]
         result[start_:end_] = gpr.predict(data[start_:end_])
-        printProgressBar(
+        print_progress_bar(
             ibatch + 1,
             nBatch,
             prefix="Get prob " + str(ibatch + 1) + " / " + str(nBatch),
             suffix="Complete",
             length=50,
+            extraCond=(irank==iroot),
         )
 
     return result

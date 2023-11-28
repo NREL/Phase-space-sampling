@@ -1,8 +1,7 @@
 torch
 numpy
-matplotlib
 mpi4py
 scikit-learn
-imageio
+prettyPlot>=0.0.9
 black
 isort

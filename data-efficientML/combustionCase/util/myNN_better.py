@@ -2,13 +2,13 @@ import os
 
 import numpy as np
 import tensorflow as tf
-from myProgressBar import printProgressBar
 from tensorflow.keras import backend as K
 from tensorflow.keras import layers, losses, optimizers, regularizers
 from tensorflow.keras.callbacks import CSVLogger
 from tensorflow.keras.constraints import max_norm, unit_norm
 from tensorflow.keras.layers import *
 from tensorflow.keras.models import Model
+from prettyPlot.progressBar import print_progress_bar
 
 
 @tf.function
@@ -72,7 +72,7 @@ class myNN(Model):
         dsOptimizer = optimizers.Adam(learning_rate=lr)
 
         # Train
-        printProgressBar(
+        print_progress_bar(
             0,
             epochs,
             prefix="Loss=%s  Epoch= %d / %d " % ("?", 0, epochs),
@@ -99,7 +99,7 @@ class myNN(Model):
                 train_mse_loss += tf.reduce_sum(mse)
                 nSample += mse.shape[0]
 
-            printProgressBar(
+            print_progress_bar(
                 epoch + 1,
                 epochs,
                 prefix="Loss=%.2f  Epoch= %d / %d "
