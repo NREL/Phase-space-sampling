@@ -4,7 +4,7 @@ import sys
 import numpy as np
 
 import phaseSpaceSampling.utils.parallel as par
-from phaseSpaceSampling import DATA_DIR
+from phaseSpaceSampling.utils.fileFinder import find_data
 
 # from memory_profiler import profile
 
@@ -35,19 +35,7 @@ def checkData(shape, N, d, nWorkingData, nWorkingDataAdjustment, useNF):
 # @profile
 def prepareData(inpt):
     # Set parameters from input
-    dataFile = inpt["dataFile"]
-    if not os.path.isfile(dataFile):
-        new_dataFile = os.path.join(DATA_DIR, os.path.split(dataFile)[-1])
-        par.printRoot(
-            f"WARNING: {dataFile} not found trying {new_dataFile} ..."
-        )
-        if not os.path.isfile(new_dataFile):
-            par.printRoot(
-                f"ERROR: could not open data {dataFile} or {new_dataFile}"
-            )
-            sys.exit()
-        else:
-            dataFile = new_dataFile
+    dataFile = find_data(inpt["dataFile"])
     preShuffled = inpt["preShuffled"] == "True"
     scalerFile = inpt["scalerFile"]
     nWorkingDatas = [int(float(n)) for n in inpt["nWorkingData"].split()]

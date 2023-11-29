@@ -9,8 +9,8 @@ from prettyPlot.parser import parse_input_file
 
 import phaseSpaceSampling.sampler as sampler
 import phaseSpaceSampling.utils.parallel as par
-from phaseSpaceSampling import DATA_DIR, INPUT_DIR
 from phaseSpaceSampling.utils.dataUtils import prepareData
+from phaseSpaceSampling.utils.fileFinder import find_input
 from phaseSpaceSampling.utils.plotFun import *
 from phaseSpaceSampling.utils.torchutils import get_num_parameters
 
@@ -33,18 +33,7 @@ args, unknown = parser.parse_known_args()
 # ~~~~ Parse input
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-inpt_file = args.input
-if not os.path.isfile(inpt_file):
-    new_inpt_file = os.path.join(INPUT_DIR, os.path.split(inpt_file)[-1])
-    par.printRoot(f"WARNING: {inpt_file} not found trying {new_inpt_file} ...")
-    if not os.path.isfile(new_inpt_file):
-        par.printRoot(
-            f"ERROR: could not open data {inpt_file} or {new_inpt_file}"
-        )
-        sys.exit()
-    else:
-        inpt_file = new_inpt_file
-
+inpt_file = find_input(args.input)
 inpt = parse_input_file(inpt_file)
 use_normalizing_flow = inpt["pdf_method"].lower() == "normalizingflow"
 use_bins = inpt["pdf_method"].lower() == "bins"
