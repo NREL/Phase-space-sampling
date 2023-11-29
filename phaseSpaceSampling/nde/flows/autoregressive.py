@@ -2,9 +2,7 @@
 
 from torch.nn import functional as F
 
-from phaseSpaceSampling.nde import distributions
-from phaseSpaceSampling.nde import flows
-from phaseSpaceSampling.nde import transforms
+from phaseSpaceSampling.nde import distributions, flows, transforms
 
 
 class MaskedAutoregressiveFlow(flows.Flow):
@@ -15,19 +13,20 @@ class MaskedAutoregressiveFlow(flows.Flow):
     > Advances in Neural Information Processing Systems, 2017.
     """
 
-    def __init__(self,
-                 features,
-                 hidden_features,
-                 num_layers,
-                 num_blocks_per_layer,
-                 use_residual_blocks=True,
-                 use_random_masks=False,
-                 use_random_permutations=False,
-                 activation=F.relu,
-                 dropout_probability=0.,
-                 batch_norm_within_layers=False,
-                 batch_norm_between_layers=False):
-
+    def __init__(
+        self,
+        features,
+        hidden_features,
+        num_layers,
+        num_blocks_per_layer,
+        use_residual_blocks=True,
+        use_random_masks=False,
+        use_random_permutations=False,
+        activation=F.relu,
+        dropout_probability=0.0,
+        batch_norm_within_layers=False,
+        batch_norm_between_layers=False,
+    ):
         if use_random_permutations:
             permutation_constructor = transforms.RandomPermutation
         else:

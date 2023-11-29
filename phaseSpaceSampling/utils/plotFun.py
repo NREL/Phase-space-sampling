@@ -1,7 +1,8 @@
 import numpy as np
-from phaseSpaceSampling.utils.parallel import irank, iroot
 from matplotlib import cm
 from prettyPlot.plotting import plt, pretty_labels
+
+from phaseSpaceSampling.utils.parallel import irank, iroot
 
 
 def cornerPlotScatter(data, title=None):

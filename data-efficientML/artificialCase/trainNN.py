@@ -7,11 +7,12 @@ sys.path.append("util")
 # NN Stuff
 import tensorflow as tf
 from myNN_better import *
+from parallel import irank, iroot
+from prettyPlot.progressBar import print_progress_bar
 from sklearn.model_selection import train_test_split
 from tensorflow import keras
 from tensorflow.keras import layers, regularizers
-from prettyPlot.progressBar import print_progress_bar
-from parallel import irank, iroot
+
 
 def partitionData(nData, nBatch):
     # ~~~~ Partition the data across batches
@@ -43,7 +44,7 @@ def getPrediction(model, data):
         prefix="Eval " + str(0) + " / " + str(nBatch),
         suffix="Complete",
         length=50,
-        extraCond=(irank==iroot),
+        extraCond=(irank == iroot),
     )
     for ibatch in range(nBatch):
         start_ = startData_b[ibatch]
@@ -55,7 +56,7 @@ def getPrediction(model, data):
             prefix="Eval " + str(ibatch + 1) + " / " + str(nBatch),
             suffix="Complete",
             length=50,
-            extraCond=(irank==iroot),
+            extraCond=(irank == iroot),
         )
 
     return result

@@ -1,13 +1,14 @@
 """Implementations of discrete distributions."""
 
 import torch
-
 from torch.nn import functional as F
 
-
 from phaseSpaceSampling.nde import distributions
-from phaseSpaceSampling.utils.torchutils import sum_except_batch, repeat_rows, split_leading_dim 
-
+from phaseSpaceSampling.utils.torchutils import (
+    repeat_rows,
+    split_leading_dim,
+    sum_except_batch,
+)
 
 
 class ConditionalIndependentBernoulli(distributions.Distribution):
@@ -31,26 +32,32 @@ class ConditionalIndependentBernoulli(distributions.Distribution):
     def _compute_params(self, context):
         """Compute the logits from context."""
         if context is None:
-            raise ValueError('Context can\'t be None.')
+            raise ValueError("Context can't be None.")
 
         logits = self._context_encoder(context)
         if logits.shape[0] != context.shape[0]:
             raise RuntimeError(
-                'The batch dimension of the parameters is inconsistent with the input.')
+                "The batch dimension of the parameters is inconsistent with the input."
+            )
 
         return logits.reshape(logits.shape[0], *self._shape)
 
     def _log_prob(self, inputs, context):
         if inputs.shape[1:] != self._shape:
-            raise ValueError('Expected input of shape {}, got {}'.format(
-                self._shape, inputs.shape[1:]))
+            raise ValueError(
+                "Expected input of shape {}, got {}".format(
+                    self._shape, inputs.shape[1:]
+                )
+            )
 
         # Compute parameters.
         logits = self._compute_params(context)
         assert logits.shape == inputs.shape
 
         # Compute log prob.
-        log_prob = -inputs * F.softplus(-logits) - (1.0 - inputs) * F.softplus(logits)
+        log_prob = -inputs * F.softplus(-logits) - (1.0 - inputs) * F.softplus(
+            logits
+        )
         log_prob = sum_except_batch(log_prob, num_batch_dims=1)
         return log_prob
 

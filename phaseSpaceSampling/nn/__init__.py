@@ -1,17 +1,10 @@
-from .resnet import (
-    ResidualNet,
-    ConvResidualNet,
-)
-
-from .unet import UNet
-
 from .attention import ConvAttentionNet
-
-from .mlp import MLP
-
 from .conv import (
-    SylvesterFlowConvEncoderNet,
-    SylvesterFlowConvDecoderNet,
+    ConvDecoder,
     ConvEncoder,
-    ConvDecoder
+    SylvesterFlowConvDecoderNet,
+    SylvesterFlowConvEncoderNet,
 )
+from .mlp import MLP
+from .resnet import ConvResidualNet, ResidualNet
+from .unet import UNet

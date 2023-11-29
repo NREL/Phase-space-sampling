@@ -1,12 +1,13 @@
-import torch
 import unittest
 
+import torch
+
+import phaseSpaceSampling as pss
 from phaseSpaceSampling.nde.transforms import qr
 from phaseSpaceSampling.nde.transforms.transform_test import TransformTest
-import phaseSpaceSampling as pss
+
 
 class QRLinearTest(TransformTest):
-
     def setUp(self):
         self.features = 3
         self.transform = qr.QRLinear(features=self.features, num_householder=4)
@@ -24,7 +25,9 @@ class QRLinearTest(TransformTest):
         inputs = torch.randn(batch_size, self.features)
         outputs, logabsdet = self.transform.forward_no_cache(inputs)
 
-        outputs_ref = torch.matmul(inputs, self.weight.t()) + self.transform.bias
+        outputs_ref = (
+            torch.matmul(inputs, self.weight.t()) + self.transform.bias
+        )
         logabsdet_ref = torch.full([batch_size], self.logabsdet.item())
 
         self.assert_tensor_is_good(outputs, [batch_size, self.features])
@@ -54,7 +57,9 @@ class QRLinearTest(TransformTest):
 
     def test_weight_inverse(self):
         weight_inverse = self.transform.weight_inverse()
-        self.assert_tensor_is_good(weight_inverse, [self.features, self.features])
+        self.assert_tensor_is_good(
+            weight_inverse, [self.features, self.features]
+        )
         self.assertEqual(weight_inverse, self.weight_inverse)
 
     def test_logabsdet(self):
@@ -68,5 +73,5 @@ class QRLinearTest(TransformTest):
         self.assert_forward_inverse_are_consistent(self.transform, inputs)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

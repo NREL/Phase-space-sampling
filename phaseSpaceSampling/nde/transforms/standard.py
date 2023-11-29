@@ -1,6 +1,7 @@
 """Implementations of some standard transforms."""
 
 import torch
+
 from phaseSpaceSampling.nde import transforms
 
 
@@ -23,12 +24,18 @@ class AffineScalarTransform(transforms.Transform):
         super().__init__()
 
         if shift is None and scale is None:
-            raise ValueError('At least one of scale and shift must be provided.')
-        if scale == 0.:
-            raise ValueError('Scale cannot be zero.')
+            raise ValueError(
+                "At least one of scale and shift must be provided."
+            )
+        if scale == 0.0:
+            raise ValueError("Scale cannot be zero.")
 
-        self.register_buffer('_shift', torch.tensor(shift if (shift is not None) else 0.))
-        self.register_buffer('_scale', torch.tensor(scale if (scale is not None) else 1.))
+        self.register_buffer(
+            "_shift", torch.tensor(shift if (shift is not None) else 0.0)
+        )
+        self.register_buffer(
+            "_scale", torch.tensor(scale if (scale is not None) else 1.0)
+        )
 
     @property
     def _log_scale(self):
@@ -36,14 +43,18 @@ class AffineScalarTransform(transforms.Transform):
 
     def forward(self, inputs, context=None):
         batch_size = inputs.shape[0]
-        num_dims = torch.prod(torch.tensor(inputs.shape[1:]), dtype=torch.float)
+        num_dims = torch.prod(
+            torch.tensor(inputs.shape[1:]), dtype=torch.float
+        )
         outputs = inputs * self._scale + self._shift
         logabsdet = torch.full([batch_size], self._log_scale * num_dims)
         return outputs, logabsdet
 
     def inverse(self, inputs, context=None):
         batch_size = inputs.shape[0]
-        num_dims = torch.prod(torch.tensor(inputs.shape[1:]), dtype=torch.float)
+        num_dims = torch.prod(
+            torch.tensor(inputs.shape[1:]), dtype=torch.float
+        )
         outputs = (inputs - self._shift) / self._scale
         logabsdet = torch.full([batch_size], -self._log_scale * num_dims)
         return outputs, logabsdet

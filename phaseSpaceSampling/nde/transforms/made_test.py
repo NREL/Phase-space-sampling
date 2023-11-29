@@ -1,14 +1,14 @@
 """Tests for MADE."""
 
+import unittest
+
 import torch
 import torchtestcase
-import unittest
 
 from phaseSpaceSampling.nde.transforms import made
 
 
 class ShapeTest(torchtestcase.TorchTestCase):
-
     def test_conditional(self):
         features = 100
         hidden_features = 200
@@ -20,11 +20,15 @@ class ShapeTest(torchtestcase.TorchTestCase):
         inputs = torch.randn(batch_size, features)
         conditional_inputs = torch.randn(batch_size, conditional_features)
 
-        for use_residual_blocks, random_mask in [(False, False),
-                                                 (False, True),
-                                                 (True, False)]:
-            with self.subTest(use_residual_blocks=use_residual_blocks,
-                              random_mask=random_mask):
+        for use_residual_blocks, random_mask in [
+            (False, False),
+            (False, True),
+            (True, False),
+        ]:
+            with self.subTest(
+                use_residual_blocks=use_residual_blocks,
+                random_mask=random_mask,
+            ):
                 model = made.MADE(
                     features=features,
                     hidden_features=hidden_features,
@@ -37,7 +41,9 @@ class ShapeTest(torchtestcase.TorchTestCase):
                 outputs = model(inputs, conditional_inputs)
                 self.assertEqual(outputs.dim(), 2)
                 self.assertEqual(outputs.shape[0], batch_size)
-                self.assertEqual(outputs.shape[1], output_multiplier * features)
+                self.assertEqual(
+                    outputs.shape[1], output_multiplier * features
+                )
 
     def test_unconditional(self):
         features = 100
@@ -48,11 +54,15 @@ class ShapeTest(torchtestcase.TorchTestCase):
 
         inputs = torch.randn(batch_size, features)
 
-        for use_residual_blocks, random_mask in [(False, False),
-                                                 (False, True),
-                                                 (True, False)]:
-            with self.subTest(use_residual_blocks=use_residual_blocks,
-                              random_mask=random_mask):
+        for use_residual_blocks, random_mask in [
+            (False, False),
+            (False, True),
+            (True, False),
+        ]:
+            with self.subTest(
+                use_residual_blocks=use_residual_blocks,
+                random_mask=random_mask,
+            ):
                 model = made.MADE(
                     features=features,
                     hidden_features=hidden_features,
@@ -64,22 +74,27 @@ class ShapeTest(torchtestcase.TorchTestCase):
                 outputs = model(inputs)
                 self.assertEqual(outputs.dim(), 2)
                 self.assertEqual(outputs.shape[0], batch_size)
-                self.assertEqual(outputs.shape[1], output_multiplier * features)
+                self.assertEqual(
+                    outputs.shape[1], output_multiplier * features
+                )
 
 
 class ConnectivityTest(torchtestcase.TorchTestCase):
-
     def test_gradients(self):
         features = 10
         hidden_features = 256
         num_blocks = 20
         output_multiplier = 3
 
-        for use_residual_blocks, random_mask in [(False, False),
-                                                 (False, True),
-                                                 (True, False)]:
-            with self.subTest(use_residual_blocks=use_residual_blocks,
-                              random_mask=random_mask):
+        for use_residual_blocks, random_mask in [
+            (False, False),
+            (False, True),
+            (True, False),
+        ]:
+            with self.subTest(
+                use_residual_blocks=use_residual_blocks,
+                random_mask=random_mask,
+            ):
                 model = made.MADE(
                     features=features,
                     hidden_features=hidden_features,
@@ -120,7 +135,9 @@ class ConnectivityTest(torchtestcase.TorchTestCase):
                         total_mask = block.linear_layers[0].mask @ total_mask
                         total_mask = block.linear_layers[1].mask @ total_mask
                     else:
-                        self.assertIsInstance(block, made.MaskedFeedforwardBlock)
+                        self.assertIsInstance(
+                            block, made.MaskedFeedforwardBlock
+                        )
                         total_mask = block.linear.mask @ total_mask
                 total_mask = model.final_layer.mask @ total_mask
                 total_mask = (total_mask > 0).float()
@@ -147,8 +164,10 @@ class ConnectivityTest(torchtestcase.TorchTestCase):
             total_mask = block.linear.mask @ total_mask
         total_mask = model.final_layer.mask @ total_mask
         total_mask = (total_mask > 0).float()
-        self.assertEqual(torch.triu(total_mask), torch.zeros([features, features]))
+        self.assertEqual(
+            torch.triu(total_mask), torch.zeros([features, features])
+        )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

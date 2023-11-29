@@ -7,7 +7,7 @@ from phaseSpaceSampling.nde.transforms import splines
 class CubicSplineTest(torchtestcase.TorchTestCase):
     def test_forward_inverse_are_consistent(self):
         num_bins = 10
-        shape = [2,3,4]
+        shape = [2, 3, 4]
 
         unnormalized_widths = torch.randn(*shape, num_bins)
         unnormalized_heights = torch.randn(*shape, num_bins)
@@ -21,7 +21,7 @@ class CubicSplineTest(torchtestcase.TorchTestCase):
                 unnormalized_heights=unnormalized_heights,
                 unnorm_derivatives_left=unnorm_derivatives_left,
                 unnorm_derivatives_right=unnorm_derivatives_right,
-                inverse=inverse
+                inverse=inverse,
             )
 
         inputs = torch.rand(*shape)
@@ -30,12 +30,15 @@ class CubicSplineTest(torchtestcase.TorchTestCase):
 
         self.eps = 1e-4
         self.assertEqual(inputs, inputs_inv)
-        self.assertEqual(logabsdet + logabsdet_inv, torch.zeros_like(logabsdet))
+        self.assertEqual(
+            logabsdet + logabsdet_inv, torch.zeros_like(logabsdet)
+        )
+
 
 class UnconstrainedCubicSplineTest(torchtestcase.TorchTestCase):
     def test_forward_inverse_are_consistent(self):
         num_bins = 10
-        shape = [2,3,4]
+        shape = [2, 3, 4]
 
         unnormalized_widths = torch.randn(*shape, num_bins)
         unnormalized_heights = torch.randn(*shape, num_bins)
@@ -49,13 +52,15 @@ class UnconstrainedCubicSplineTest(torchtestcase.TorchTestCase):
                 unnormalized_heights=unnormalized_heights,
                 unnorm_derivatives_left=unnorm_derivatives_left,
                 unnorm_derivatives_right=unnorm_derivatives_right,
-                inverse=inverse
+                inverse=inverse,
             )
 
-        inputs = 3 * torch.randn(*shape) # Note inputs are outside [0,1].
+        inputs = 3 * torch.randn(*shape)  # Note inputs are outside [0,1].
         outputs, logabsdet = call_spline_fn(inputs, inverse=False)
         inputs_inv, logabsdet_inv = call_spline_fn(outputs, inverse=True)
 
         self.eps = 1e-4
         self.assertEqual(inputs, inputs_inv)
-        self.assertEqual(logabsdet + logabsdet_inv, torch.zeros_like(logabsdet))
+        self.assertEqual(
+            logabsdet + logabsdet_inv, torch.zeros_like(logabsdet)
+        )

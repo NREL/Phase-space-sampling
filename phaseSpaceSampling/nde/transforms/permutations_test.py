@@ -1,14 +1,14 @@
 """Tests for permutations."""
 
-import torch
 import unittest
+
+import torch
 
 from phaseSpaceSampling.nde.transforms import permutations
 from phaseSpaceSampling.nde.transforms.transform_test import TransformTest
 
 
 class PermutationTest(TransformTest):
-
     def test_forward(self):
         batch_size = 10
         features = 100
@@ -48,5 +48,5 @@ class PermutationTest(TransformTest):
                 self.assert_forward_inverse_are_consistent(transform, inputs)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

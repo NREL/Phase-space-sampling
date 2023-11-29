@@ -5,18 +5,19 @@ import torch
 from phaseSpaceSampling.nde import transforms
 from phaseSpaceSampling.utils.typechecks import is_positive_int
 
+
 class Permutation(transforms.Transform):
     """Permutes inputs on a given dimension using a given permutation."""
 
     def __init__(self, permutation, dim=1):
         if permutation.ndimension() != 1:
-            raise ValueError('Permutation must be a 1D tensor.')
+            raise ValueError("Permutation must be a 1D tensor.")
         if not is_positive_int(dim):
-            raise ValueError('dim must be a positive integer.')
+            raise ValueError("dim must be a positive integer.")
 
         super().__init__()
         self._dim = dim
-        self.register_buffer('_permutation', permutation)
+        self.register_buffer("_permutation", permutation)
 
     @property
     def _inverse_permutation(self):
@@ -27,8 +28,11 @@ class Permutation(transforms.Transform):
         if dim >= inputs.ndimension():
             raise ValueError("No dimension {} in inputs.".format(dim))
         if inputs.shape[dim] != len(permutation):
-            raise ValueError("Dimension {} in inputs must be of size {}."
-                             .format(dim, len(permutation)))
+            raise ValueError(
+                "Dimension {} in inputs must be of size {}.".format(
+                    dim, len(permutation)
+                )
+            )
         batch_size = inputs.shape[0]
         outputs = torch.index_select(inputs, dim, permutation)
         logabsdet = torch.zeros(batch_size)
@@ -46,7 +50,7 @@ class RandomPermutation(Permutation):
 
     def __init__(self, features, dim=1):
         if not is_positive_int(features):
-            raise ValueError('Number of features must be a positive integer.')
+            raise ValueError("Number of features must be a positive integer.")
         super().__init__(torch.randperm(features), dim)
 
 
@@ -55,5 +59,5 @@ class ReversePermutation(Permutation):
 
     def __init__(self, features, dim=1):
         if not is_positive_int(features):
-            raise ValueError('Number of features must be a positive integer.')
+            raise ValueError("Number of features must be a positive integer.")
         super().__init__(torch.arange(features - 1, -1, -1), dim)

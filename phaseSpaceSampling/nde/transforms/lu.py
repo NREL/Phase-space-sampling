@@ -1,8 +1,8 @@
 import numpy as np
 import torch
-
 from torch import nn
-from torch.nn import functional as F, init
+from torch.nn import functional as F
+from torch.nn import init
 
 from phaseSpaceSampling.nde.transforms.linear import Linear
 
@@ -10,7 +10,9 @@ from phaseSpaceSampling.nde.transforms.linear import Linear
 class LULinear(Linear):
     """A linear transform where we parameterize the LU decomposition of the weights."""
 
-    def __init__(self, features, using_cache=False, identity_init=True, eps=1e-3):
+    def __init__(
+        self, features, using_cache=False, identity_init=True, eps=1e-3
+    ):
         super().__init__(features, using_cache)
 
         self.eps = eps
@@ -43,12 +45,16 @@ class LULinear(Linear):
 
     def _create_lower_upper(self):
         lower = self.lower_entries.new_zeros(self.features, self.features)
-        lower[self.lower_indices[0], self.lower_indices[1]] = self.lower_entries
+        lower[
+            self.lower_indices[0], self.lower_indices[1]
+        ] = self.lower_entries
         # The diagonal of L is taken to be all-ones without loss of generality.
-        lower[self.diag_indices[0], self.diag_indices[1]] = 1.
+        lower[self.diag_indices[0], self.diag_indices[1]] = 1.0
 
         upper = self.upper_entries.new_zeros(self.features, self.features)
-        upper[self.upper_indices[0], self.upper_indices[1]] = self.upper_entries
+        upper[
+            self.upper_indices[0], self.upper_indices[1]
+        ] = self.upper_entries
         upper[self.diag_indices[0], self.diag_indices[1]] = self.upper_diag
 
         return lower, upper
@@ -77,8 +83,12 @@ class LULinear(Linear):
         """
         lower, upper = self._create_lower_upper()
         outputs = inputs - self.bias
-        outputs, _ = torch.triangular_solve(outputs.t(), lower, upper=False, unitriangular=True)
-        outputs, _ = torch.triangular_solve(outputs, upper, upper=True, unitriangular=False)
+        outputs, _ = torch.triangular_solve(
+            outputs.t(), lower, upper=False, unitriangular=True
+        )
+        outputs, _ = torch.triangular_solve(
+            outputs, upper, upper=True, unitriangular=False
+        )
         outputs = outputs.t()
 
         logabsdet = -self.logabsdet()
@@ -103,8 +113,12 @@ class LULinear(Linear):
         """
         lower, upper = self._create_lower_upper()
         identity = torch.eye(self.features, self.features)
-        lower_inverse, _ = torch.trtrs(identity, lower, upper=False, unitriangular=True)
-        weight_inverse, _ = torch.trtrs(lower_inverse, upper, upper=True, unitriangular=False)
+        lower_inverse, _ = torch.trtrs(
+            identity, lower, upper=False, unitriangular=True
+        )
+        weight_inverse, _ = torch.trtrs(
+            lower_inverse, upper, upper=True, unitriangular=False
+        )
         return weight_inverse
 
     @property

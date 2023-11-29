@@ -1,12 +1,10 @@
 """Implementation of normalization-based transforms."""
 import numpy as np
 import torch
-
 from torch import nn
 from torch.nn import functional as F
 
 from phaseSpaceSampling.nde import transforms
-
 from phaseSpaceSampling.utils.typechecks import is_positive_int
 
 # class BatchNorm(transforms.Transform):
@@ -81,17 +79,19 @@ class BatchNorm(transforms.Transform):
 
     def __init__(self, features, eps=1e-5, momentum=0.1, affine=True):
         if not is_positive_int(features):
-            raise TypeError('Number of features must be a positive integer.')
+            raise TypeError("Number of features must be a positive integer.")
         super().__init__()
 
         self.momentum = momentum
         self.eps = eps
         constant = np.log(np.exp(1 - eps) - 1)
-        self.unconstrained_weight = nn.Parameter(constant * torch.ones(features))
+        self.unconstrained_weight = nn.Parameter(
+            constant * torch.ones(features)
+        )
         self.bias = nn.Parameter(torch.zeros(features))
 
-        self.register_buffer('running_mean', torch.zeros(features))
-        self.register_buffer('running_var', torch.zeros(features))
+        self.register_buffer("running_mean", torch.zeros(features))
+        self.register_buffer("running_var", torch.zeros(features))
 
     @property
     def weight(self):
@@ -99,16 +99,25 @@ class BatchNorm(transforms.Transform):
 
     def forward(self, inputs, context=None):
         if inputs.dim() != 2:
-            raise ValueError('Expected 2-dim inputs, got inputs of shape: {}'.format(inputs.shape))
+            raise ValueError(
+                "Expected 2-dim inputs, got inputs of shape: {}".format(
+                    inputs.shape
+                )
+            )
 
         if self.training:
             mean, var = inputs.mean(0), inputs.var(0)
-            self.running_mean.mul_(1 - self.momentum).add_(mean * self.momentum)
+            self.running_mean.mul_(1 - self.momentum).add_(
+                mean * self.momentum
+            )
             self.running_var.mul_(1 - self.momentum).add_(var * self.momentum)
         else:
             mean, var = self.running_mean, self.running_var
 
-        outputs = self.weight * ((inputs - mean) / torch.sqrt((var + self.eps))) + self.bias
+        outputs = (
+            self.weight * ((inputs - mean) / torch.sqrt((var + self.eps)))
+            + self.bias
+        )
 
         logabsdet_ = torch.log(self.weight) - 0.5 * torch.log(var + self.eps)
         logabsdet = torch.sum(logabsdet_) * torch.ones(inputs.shape[0])
@@ -118,13 +127,24 @@ class BatchNorm(transforms.Transform):
     def inverse(self, inputs, context=None):
         if self.training:
             raise transforms.InverseNotAvailable(
-                'Batch norm inverse is only available in eval mode, not in training mode.')
+                "Batch norm inverse is only available in eval mode, not in training mode."
+            )
         if inputs.dim() != 2:
-            raise ValueError('Expected 2-dim inputs, got inputs of shape: {}'.format(inputs.shape))
+            raise ValueError(
+                "Expected 2-dim inputs, got inputs of shape: {}".format(
+                    inputs.shape
+                )
+            )
 
-        outputs = torch.sqrt(self.running_var + self.eps) * ((inputs - self.bias) / self.weight) + self.running_mean
+        outputs = (
+            torch.sqrt(self.running_var + self.eps)
+            * ((inputs - self.bias) / self.weight)
+            + self.running_mean
+        )
 
-        logabsdet_ = - torch.log(self.weight) + 0.5 * torch.log(self.running_var + self.eps)
+        logabsdet_ = -torch.log(self.weight) + 0.5 * torch.log(
+            self.running_var + self.eps
+        )
         logabsdet = torch.sum(logabsdet_) * torch.ones(inputs.shape[0])
 
         return outputs, logabsdet
@@ -140,7 +160,7 @@ class ActNorm(transforms.Transform):
         > D. Kingma et. al., Glow: Generative flow with invertible 1x1 convolutions, NeurIPS 2018.
         """
         if not is_positive_int(features):
-            raise TypeError('Number of features must be a positive integer.')
+            raise TypeError("Number of features must be a positive integer.")
         super().__init__()
 
         self.initialized = False
@@ -159,7 +179,7 @@ class ActNorm(transforms.Transform):
 
     def forward(self, inputs, context=None):
         if inputs.dim() not in [2, 4]:
-            raise ValueError('Expecting inputs to be a 2D or a 4D tensor.')
+            raise ValueError("Expecting inputs to be a 2D or a 4D tensor.")
 
         if self.training and not self.initialized:
             self._initialize(inputs)
@@ -169,32 +189,36 @@ class ActNorm(transforms.Transform):
 
         if inputs.dim() == 4:
             batch_size, _, h, w = inputs.shape
-            logabsdet = h * w * torch.sum(self.log_scale) * torch.ones(batch_size)
+            logabsdet = (
+                h * w * torch.sum(self.log_scale) * torch.ones(batch_size)
+            )
         else:
-            batch_size,_ = inputs.shape
+            batch_size, _ = inputs.shape
             logabsdet = torch.sum(self.log_scale) * torch.ones(batch_size)
 
         return outputs, logabsdet
 
     def inverse(self, inputs, context=None):
         if inputs.dim() not in [2, 4]:
-            raise ValueError('Expecting inputs to be a 2D or a 4D tensor.')
+            raise ValueError("Expecting inputs to be a 2D or a 4D tensor.")
 
         scale, shift = self._broadcastable_scale_shift(inputs)
         outputs = (inputs - shift) / scale
 
         if inputs.dim() == 4:
             batch_size, _, h, w = inputs.shape
-            logabsdet = - h * w * torch.sum(self.log_scale) * torch.ones(batch_size)
+            logabsdet = (
+                -h * w * torch.sum(self.log_scale) * torch.ones(batch_size)
+            )
         else:
             batch_size, _ = inputs.shape
-            logabsdet = - torch.sum(self.log_scale) * torch.ones(batch_size)
+            logabsdet = -torch.sum(self.log_scale) * torch.ones(batch_size)
 
         return outputs, logabsdet
 
     def _initialize(self, inputs):
         """Data-dependent initialization, s.t. post-actnorm activations have zero mean and unit
-        variance. """
+        variance."""
         if inputs.dim() == 4:
             num_channels = inputs.shape[1]
             inputs = inputs.permute(0, 2, 3, 1).reshape(-1, num_channels)
@@ -206,6 +230,3 @@ class ActNorm(transforms.Transform):
             self.shift.data = -mu
 
         self.initialized = True
-
-
-

@@ -2,11 +2,12 @@
 # TODO: should be moved to module nn.
 
 import torch
-
 from torch import nn
-from torch.nn import functional as F, init
+from torch.nn import functional as F
+from torch.nn import init
 
-from phaseSpaceSampling.utils.torchutils import tile 
+from phaseSpaceSampling.utils.torchutils import tile
+
 
 def _get_input_degrees(in_features):
     """Returns the degrees an input to MADE should have."""
@@ -16,37 +17,41 @@ def _get_input_degrees(in_features):
 class MaskedLinear(nn.Linear):
     """A linear module with a masked weight matrix."""
 
-    def __init__(self,
-                 in_degrees,
-                 out_features,
-                 autoregressive_features,
-                 random_mask,
-                 is_output,
-                 bias=True):
+    def __init__(
+        self,
+        in_degrees,
+        out_features,
+        autoregressive_features,
+        random_mask,
+        is_output,
+        bias=True,
+    ):
         super().__init__(
-            in_features=len(in_degrees),
-            out_features=out_features,
-            bias=bias)
+            in_features=len(in_degrees), out_features=out_features, bias=bias
+        )
         mask, degrees = self._get_mask_and_degrees(
             in_degrees=in_degrees,
             out_features=out_features,
             autoregressive_features=autoregressive_features,
             random_mask=random_mask,
-            is_output=is_output)
-        self.register_buffer('mask', mask)
-        self.register_buffer('degrees', degrees)
+            is_output=is_output,
+        )
+        self.register_buffer("mask", mask)
+        self.register_buffer("degrees", degrees)
 
     @classmethod
-    def _get_mask_and_degrees(cls,
-                              in_degrees,
-                              out_features,
-                              autoregressive_features,
-                              random_mask,
-                              is_output):
+    def _get_mask_and_degrees(
+        cls,
+        in_degrees,
+        out_features,
+        autoregressive_features,
+        random_mask,
+        is_output,
+    ):
         if is_output:
             out_degrees = tile(
                 _get_input_degrees(autoregressive_features),
-                out_features // autoregressive_features
+                out_features // autoregressive_features,
             )
             mask = (out_degrees[..., None] > in_degrees).float()
 
@@ -58,7 +63,8 @@ class MaskedLinear(nn.Linear):
                     low=min_in_degree,
                     high=autoregressive_features,
                     size=[out_features],
-                    dtype=torch.long)
+                    dtype=torch.long,
+                )
             else:
                 max_ = max(1, autoregressive_features - 1)
                 min_ = min(1, autoregressive_features - 1)
@@ -78,14 +84,16 @@ class MaskedFeedforwardBlock(nn.Module):
     the number of input features.
     """
 
-    def __init__(self,
-                 in_degrees,
-                 autoregressive_features,
-                 context_features=None,
-                 random_mask=False,
-                 activation=F.relu,
-                 dropout_probability=0.,
-                 use_batch_norm=False):
+    def __init__(
+        self,
+        in_degrees,
+        autoregressive_features,
+        context_features=None,
+        random_mask=False,
+        activation=F.relu,
+        dropout_probability=0.0,
+        use_batch_norm=False,
+    ):
         super().__init__()
         features = len(in_degrees)
 
@@ -129,17 +137,21 @@ class MaskedFeedforwardBlock(nn.Module):
 class MaskedResidualBlock(nn.Module):
     """A residual block containing masked linear modules."""
 
-    def __init__(self,
-                 in_degrees,
-                 autoregressive_features,
-                 context_features=None,
-                 random_mask=False,
-                 activation=F.relu,
-                 dropout_probability=0.,
-                 use_batch_norm=False,
-                 zero_initialization=True):
+    def __init__(
+        self,
+        in_degrees,
+        autoregressive_features,
+        context_features=None,
+        random_mask=False,
+        activation=F.relu,
+        dropout_probability=0.0,
+        use_batch_norm=False,
+        zero_initialization=True,
+    ):
         if random_mask:
-            raise ValueError('Masked residual block can\'t be used with random masks.')
+            raise ValueError(
+                "Masked residual block can't be used with random masks."
+            )
         super().__init__()
         features = len(in_degrees)
 
@@ -149,10 +161,9 @@ class MaskedResidualBlock(nn.Module):
         # Batch norm.
         self.use_batch_norm = use_batch_norm
         if use_batch_norm:
-            self.batch_norm_layers = nn.ModuleList([
-                nn.BatchNorm1d(features, eps=1e-3)
-                for _ in range(2)
-            ])
+            self.batch_norm_layers = nn.ModuleList(
+                [nn.BatchNorm1d(features, eps=1e-3) for _ in range(2)]
+            )
 
         # Masked linear.
         linear_0 = MaskedLinear(
@@ -172,8 +183,10 @@ class MaskedResidualBlock(nn.Module):
         self.linear_layers = nn.ModuleList([linear_0, linear_1])
         self.degrees = linear_1.degrees
         if torch.all(self.degrees >= in_degrees).item() != 1:
-            raise RuntimeError('In a masked residual block, the output degrees can\'t be'
-                               ' less than the corresponding input degrees.')
+            raise RuntimeError(
+                "In a masked residual block, the output degrees can't be"
+                " less than the corresponding input degrees."
+            )
 
         # Activation and dropout
         self.activation = activation
@@ -197,8 +210,7 @@ class MaskedResidualBlock(nn.Module):
         temps = self.linear_layers[1](temps)
         if context is not None:
             temps = F.glu(
-                torch.cat((temps, self.context_layer(context)), dim=1),
-                dim=1
+                torch.cat((temps, self.context_layer(context)), dim=1), dim=1
             )
         return inputs + temps
 
@@ -210,19 +222,23 @@ class MADE(nn.Module):
     Optionally, it can use batch norm or dropout within blocks (default is no).
     """
 
-    def __init__(self,
-                 features,
-                 hidden_features,
-                 context_features=None,
-                 num_blocks=2,
-                 output_multiplier=1,
-                 use_residual_blocks=True,
-                 random_mask=False,
-                 activation=F.relu,
-                 dropout_probability=0.,
-                 use_batch_norm=False):
+    def __init__(
+        self,
+        features,
+        hidden_features,
+        context_features=None,
+        num_blocks=2,
+        output_multiplier=1,
+        use_residual_blocks=True,
+        random_mask=False,
+        activation=F.relu,
+        dropout_probability=0.0,
+        use_batch_norm=False,
+    ):
         if use_residual_blocks and random_mask:
-            raise ValueError('Residual blocks can\'t be used with random masks.')
+            raise ValueError(
+                "Residual blocks can't be used with random masks."
+            )
         super().__init__()
 
         # Initial layer.
@@ -231,7 +247,7 @@ class MADE(nn.Module):
             out_features=hidden_features,
             autoregressive_features=features,
             random_mask=random_mask,
-            is_output=False
+            is_output=False,
         )
 
         if context_features is not None:
@@ -265,7 +281,7 @@ class MADE(nn.Module):
             out_features=features * output_multiplier,
             autoregressive_features=features,
             random_mask=random_mask,
-            is_output=True
+            is_output=True,
         )
 
     def forward(self, inputs, context=None):

@@ -4,7 +4,6 @@ import unittest
 
 import torch
 import torchtestcase
-
 from utils import torchutils
 
 

@@ -1,7 +1,11 @@
 """Basic definitions for the flows module."""
 
 from phaseSpaceSampling.nde import distributions
-from phaseSpaceSampling.utils.torchutils import merge_leading_dims, repeat_rows, split_leading_dim
+from phaseSpaceSampling.utils.torchutils import (
+    merge_leading_dims,
+    repeat_rows,
+    split_leading_dim,
+)
 
 
 class Flow(distributions.Distribution):
@@ -45,7 +49,9 @@ class Flow(distributions.Distribution):
 
         For flows, this is more efficient that calling `sample` and `log_prob` separately.
         """
-        noise, log_prob = self._distribution.sample_and_log_prob(num_samples, context=context)
+        noise, log_prob = self._distribution.sample_and_log_prob(
+            num_samples, context=context
+        )
 
         if context is not None:
             # Merge the context dimension with sample dimension in order to apply the transform.

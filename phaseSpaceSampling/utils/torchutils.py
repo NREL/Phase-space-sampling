@@ -2,7 +2,10 @@
 
 import torch
 
-from phaseSpaceSampling.utils.typechecks import is_positive_int, is_nonnegative_int
+from phaseSpaceSampling.utils.typechecks import (
+    is_nonnegative_int,
+    is_positive_int,
+)
 
 
 def tile(x, n):

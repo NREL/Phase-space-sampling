@@ -1,13 +1,15 @@
+import argparse
 import os
 import sys
 
 import matplotlib.pyplot as plt
 import numpy as np
-
 from prettyPlot.parser import parse_input_file
 from prettyPlot.plotting import pretty_labels
 
-import argparse
+import phaseSpaceSampling.utils.parallel as par
+from phaseSpaceSampling import INPUT_DIR
+
 parser = argparse.ArgumentParser(description="Loss plotting")
 parser.add_argument(
     "-i",
@@ -23,13 +25,24 @@ args, unknown = parser.parse_known_args()
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # ~~~~ Parse input
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+inpt_file = args.input
+if not os.path.isfile(inpt_file):
+    new_inpt_file = os.path.join(INPUT_DIR, os.path.split(inpt_file)[-1])
+    par.printRoot(f"WARNING: {inpt_file} not found trying {new_inpt_file} ...")
+    if not os.path.isfile(new_inpt_file):
+        par.printRoot(
+            f"ERROR: could not open data {inpt_file} or {new_inpt_file}"
+        )
+        sys.exit()
+    else:
+        inpt_file = new_inpt_file
 
-inpt = parse_input_file(args.input)
+inpt = parse_input_file(inpt_file)
 
 
-if inpt["pdf_method"].lower() == "normalizingflow": 
+if inpt["pdf_method"].lower() == "normalizingflow":
     nIter = int(inpt["num_pdf_iter"])
-    
+
     # Folder where figures are saved
     figureFolder = "Figures"
     os.makedirs(figureFolder, exist_ok=True)
@@ -40,7 +53,9 @@ if inpt["pdf_method"].lower() == "normalizingflow":
                 f"TrainingLog/log_iter{i}.csv", delimiter=";", skip_header=1
             )
             axs[i].plot(Loss[:, 0], Loss[:, 1], color="k", linewidth=3)
-            pretty_labels("Step", "Loss", 14, title=f"iteration {i}", ax=axs[i])
+            pretty_labels(
+                "Step", "Loss", 14, title=f"iteration {i}", ax=axs[i]
+            )
     else:
         fig = plt.figure()
         Loss = np.genfromtxt(
@@ -48,6 +63,6 @@ if inpt["pdf_method"].lower() == "normalizingflow":
         )
         plt.plot(Loss[:, 0], Loss[:, 1], color="k", linewidth=3)
         pretty_labels("Step", "Loss", 14, title=f"iteration 0")
-    
+
     plt.savefig(figureFolder + "/loss.png")
     plt.close()

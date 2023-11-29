@@ -1,15 +1,15 @@
 """Tests for the basic flow definitions."""
 
+import unittest
+
 import torch
 import torchtestcase
-import unittest
-from phaseSpaceSampling.nde import transforms
-from phaseSpaceSampling.nde import distributions
+
+from phaseSpaceSampling.nde import distributions, transforms
 from phaseSpaceSampling.nde.flows import base
 
 
 class FlowTest(torchtestcase.TorchTestCase):
-
     def test_log_prob(self):
         batch_size = 10
         input_shape = [2, 3, 4]
@@ -41,10 +41,14 @@ class FlowTest(torchtestcase.TorchTestCase):
                 samples = flow.sample(num_samples, context=context)
                 self.assertIsInstance(samples, torch.Tensor)
                 if context is None:
-                    self.assertEqual(samples.shape, torch.Size([num_samples] + input_shape))
+                    self.assertEqual(
+                        samples.shape, torch.Size([num_samples] + input_shape)
+                    )
                 else:
                     self.assertEqual(
-                        samples.shape, torch.Size([context_size, num_samples] + input_shape))
+                        samples.shape,
+                        torch.Size([context_size, num_samples] + input_shape),
+                    )
 
     def test_sample_and_log_prob(self):
         num_samples = 10
@@ -58,7 +62,9 @@ class FlowTest(torchtestcase.TorchTestCase):
         self.assertIsInstance(samples, torch.Tensor)
         self.assertIsInstance(log_prob_1, torch.Tensor)
         self.assertIsInstance(log_prob_2, torch.Tensor)
-        self.assertEqual(samples.shape, torch.Size([num_samples] + input_shape))
+        self.assertEqual(
+            samples.shape, torch.Size([num_samples] + input_shape)
+        )
         self.assertEqual(log_prob_1.shape, torch.Size([num_samples]))
         self.assertEqual(log_prob_2.shape, torch.Size([num_samples]))
         self.assertEqual(log_prob_1, log_prob_2)
@@ -73,11 +79,18 @@ class FlowTest(torchtestcase.TorchTestCase):
             distribution=distributions.StandardNormal(input_shape),
         )
         context = torch.randn(context_size, *context_shape)
-        samples, log_prob = flow.sample_and_log_prob(num_samples, context=context)
+        samples, log_prob = flow.sample_and_log_prob(
+            num_samples, context=context
+        )
         self.assertIsInstance(samples, torch.Tensor)
         self.assertIsInstance(log_prob, torch.Tensor)
-        self.assertEqual(samples.shape, torch.Size([context_size, num_samples] + input_shape))
-        self.assertEqual(log_prob.shape, torch.Size([context_size, num_samples]))
+        self.assertEqual(
+            samples.shape,
+            torch.Size([context_size, num_samples] + input_shape),
+        )
+        self.assertEqual(
+            log_prob.shape, torch.Size([context_size, num_samples])
+        )
 
     def test_transform_to_noise(self):
         batch_size = 10
@@ -97,5 +110,5 @@ class FlowTest(torchtestcase.TorchTestCase):
                 self.assertEqual(noise.shape, torch.Size([batch_size] + shape))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

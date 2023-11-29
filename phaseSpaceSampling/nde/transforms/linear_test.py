@@ -1,15 +1,15 @@
 """Tests for linear transforms."""
 
-import torch
 import unittest
-
 from unittest.mock import MagicMock
 
-from phaseSpaceSampling.nde.transforms import linear
-from phaseSpaceSampling.nde.transforms.transform_test import TransformTest
-from phaseSpaceSampling.nde.transforms.linear import Linear
+import torch
 
 import phaseSpaceSampling as pss
+from phaseSpaceSampling.nde.transforms import linear
+from phaseSpaceSampling.nde.transforms.linear import Linear
+from phaseSpaceSampling.nde.transforms.transform_test import TransformTest
+
 
 class LinearTest(TransformTest):
     def setUp(self):
@@ -20,7 +20,9 @@ class LinearTest(TransformTest):
         inverse = torch.randn(features, features)
         logabsdet = torch.randn(1)
         self.transform = Linear(features)
-        self.transform.bias.data = torch.randn(features)  # Just so bias isn't zero.
+        self.transform.bias.data = torch.randn(
+            features
+        )  # Just so bias isn't zero.
 
         self.inputs = torch.randn(batch_size, features)
         self.outputs_fwd = self.inputs @ weight.t() + self.transform.bias
@@ -30,9 +32,11 @@ class LinearTest(TransformTest):
 
         # Mocks for abstract methods.
         self.transform.forward_no_cache = MagicMock(
-            return_value=(self.outputs_fwd, self.logabsdet_fwd))
+            return_value=(self.outputs_fwd, self.logabsdet_fwd)
+        )
         self.transform.inverse_no_cache = MagicMock(
-            return_value=(self.outputs_inv, self.logabsdet_inv))
+            return_value=(self.outputs_inv, self.logabsdet_inv)
+        )
         self.transform.weight = MagicMock(return_value=weight)
         self.transform.weight_inverse = MagicMock(return_value=inverse)
         self.transform.logabsdet = MagicMock(return_value=logabsdet)
@@ -150,7 +154,9 @@ class LinearTest(TransformTest):
         self.transform.logabsdet.reset_mock()
 
         self.transform.train()  # Cache should be invalidated here.
-        self.assertTrue(self.transform.using_cache)  # Using cache should still be enabled.
+        self.assertTrue(
+            self.transform.using_cache
+        )  # Using cache should still be enabled.
         self.transform.eval()
 
         outputs, logabsdet = self.transform(self.inputs)
@@ -171,7 +177,9 @@ class LinearTest(TransformTest):
         self.transform.logabsdet.reset_mock()
 
         self.transform.train()  # Cache should be disabled and invalidated here.
-        self.assertTrue(self.transform.using_cache)  # Using cache should still be enabled.
+        self.assertTrue(
+            self.transform.using_cache
+        )  # Using cache should still be enabled.
         self.transform.eval()
 
         outputs, logabsdet = self.transform.inverse(self.inputs)
@@ -183,7 +191,6 @@ class LinearTest(TransformTest):
 
 
 class NaiveLinearTest(TransformTest):
-
     def setUp(self):
         self.features = 3
         self.transform = linear.NaiveLinear(features=self.features)
@@ -229,7 +236,9 @@ class NaiveLinearTest(TransformTest):
 
     def test_weight_inverse(self):
         weight_inverse = self.transform.weight_inverse()
-        self.assert_tensor_is_good(weight_inverse, [self.features, self.features])
+        self.assert_tensor_is_good(
+            weight_inverse, [self.features, self.features]
+        )
         self.assertEqual(weight_inverse, self.weight_inverse)
 
     def test_logabsdet(self):
@@ -243,5 +252,5 @@ class NaiveLinearTest(TransformTest):
         self.assert_forward_inverse_are_consistent(self.transform, inputs)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

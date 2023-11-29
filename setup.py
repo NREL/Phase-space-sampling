@@ -1,9 +1,10 @@
 import os
+
 from setuptools import setup
 
 setup(
-    name='phaseSpaceSampling',
-    version='0.0.1',
+    name="phaseSpaceSampling",
+    version="0.0.1",
     description="Reduce a large and high-dimensional dataset by downselecting data uniformly in phase space",
     url="https://github.com/NREL/Phase-space-sampling",
     author="Malik Hassanaly",
@@ -15,16 +16,16 @@ setup(
         "Natural Language :: English",
         "Programming Language :: Python :: 3.10",
     ],
-    python_requires='>=3.10',
+    python_requires=">=3.10",
     install_requires=[
-                      "openmpi",
-                      "torch",
-                      "numpy",
-                      "mpi4py",
-                      "scikit-learn",
-                      "prettyPlot>=0.0.10",
-                      "black",
-                      "isort",
-                      "codespell",
-                     ],
+        "openmpi",
+        "torch",
+        "numpy",
+        "mpi4py",
+        "scikit-learn",
+        "prettyPlot>=0.0.10",
+        "black",
+        "isort",
+        "codespell",
+    ],
 )

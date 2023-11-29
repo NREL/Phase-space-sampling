@@ -1,10 +1,13 @@
 """Tests for the invertible non-linearities."""
 
-import torch
 import unittest
 
+import torch
+
 import phaseSpaceSampling.nde.transforms.splines.quadratic
-from phaseSpaceSampling.nde.transforms import base, nonlinearities as nl, standard
+from phaseSpaceSampling.nde.transforms import base
+from phaseSpaceSampling.nde.transforms import nonlinearities as nl
+from phaseSpaceSampling.nde.transforms import standard
 from phaseSpaceSampling.nde.transforms.transform_test import TransformTest
 
 
@@ -22,17 +25,21 @@ class TestPiecewiseCDF(TransformTest):
     def setUp(self):
         self.shape = [2, 3, 4]
         self.batch_size = 10
-        self.transforms = [nl.PiecewiseLinearCDF(self.shape),
-                           nl.PiecewiseQuadraticCDF(self.shape),
-                           nl.PiecewiseCubicCDF(self.shape),
-                           nl.PiecewiseRationalQuadraticCDF(self.shape)]
+        self.transforms = [
+            nl.PiecewiseLinearCDF(self.shape),
+            nl.PiecewiseQuadraticCDF(self.shape),
+            nl.PiecewiseCubicCDF(self.shape),
+            nl.PiecewiseRationalQuadraticCDF(self.shape),
+        ]
 
     def test_raises_domain_exception(self):
         for transform in self.transforms:
             with self.subTest(transform=transform):
                 for value in [-1.0, -0.1, 1.1, 2.0]:
                     with self.assertRaises(base.InputOutsideDomain):
-                        inputs = torch.full([self.batch_size] + self.shape, value)
+                        inputs = torch.full(
+                            [self.batch_size] + self.shape, value
+                        )
                         transform.forward(inputs)
 
     def test_zeros_to_zeros(self):
@@ -58,14 +65,17 @@ class TestPiecewiseCDF(TransformTest):
                 self.eps = 1e-4
                 self.assert_forward_inverse_are_consistent(transform, inputs)
 
+
 class TestUnconstrainedPiecewiseCDF(TransformTest):
     def test_forward_inverse_are_consistent(self):
-        shape = [2,3,4]
+        shape = [2, 3, 4]
         batch_size = 10
-        transforms = [nl.PiecewiseLinearCDF(shape, tails='linear'),
-                      nl.PiecewiseQuadraticCDF(shape, tails='linear'),
-                      nl.PiecewiseCubicCDF(shape, tails='linear'),
-                      nl.PiecewiseRationalQuadraticCDF(shape, tails='linear')]
+        transforms = [
+            nl.PiecewiseLinearCDF(shape, tails="linear"),
+            nl.PiecewiseQuadraticCDF(shape, tails="linear"),
+            nl.PiecewiseCubicCDF(shape, tails="linear"),
+            nl.PiecewiseRationalQuadraticCDF(shape, tails="linear"),
+        ]
 
         for transform in transforms:
             with self.subTest(transform=transform):
@@ -78,8 +88,12 @@ class LogitTest(TransformTest):
     def test_forward_zero_and_one(self):
         batch_size = 10
         shape = [5, 10, 15]
-        inputs = torch.cat([torch.zeros(batch_size // 2, *shape),
-                            torch.ones(batch_size // 2, *shape)])
+        inputs = torch.cat(
+            [
+                torch.zeros(batch_size // 2, *shape),
+                torch.ones(batch_size // 2, *shape),
+            ]
+        )
 
         transform = nl.Logit()
         outputs, logabsdet = transform(inputs)
@@ -89,7 +103,6 @@ class LogitTest(TransformTest):
 
 
 class NonlinearitiesTest(TransformTest):
-
     def test_forward(self):
         batch_size = 10
         shape = [5, 10, 15]
@@ -100,7 +113,9 @@ class NonlinearitiesTest(TransformTest):
             nl.LeakyReLU(),
             nl.Sigmoid(),
             nl.Logit(),
-            nl.CompositeCDFTransform(nl.Sigmoid(), standard.IdentityTransform())
+            nl.CompositeCDFTransform(
+                nl.Sigmoid(), standard.IdentityTransform()
+            ),
         ]
         for transform in transforms:
             with self.subTest(transform=transform):
@@ -118,7 +133,9 @@ class NonlinearitiesTest(TransformTest):
             nl.LeakyReLU(),
             nl.Sigmoid(),
             nl.Logit(),
-            nl.CompositeCDFTransform(nl.Sigmoid(), standard.IdentityTransform())
+            nl.CompositeCDFTransform(
+                nl.Sigmoid(), standard.IdentityTransform()
+            ),
         ]
         for transform in transforms:
             with self.subTest(transform=transform):
@@ -136,7 +153,9 @@ class NonlinearitiesTest(TransformTest):
             nl.LeakyReLU(),
             nl.Sigmoid(),
             nl.Logit(),
-            nl.CompositeCDFTransform(nl.Sigmoid(), standard.IdentityTransform())
+            nl.CompositeCDFTransform(
+                nl.Sigmoid(), standard.IdentityTransform()
+            ),
         ]
         self.eps = 1e-3
         for transform in transforms:
@@ -144,5 +163,5 @@ class NonlinearitiesTest(TransformTest):
                 self.assert_forward_inverse_are_consistent(transform, inputs)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

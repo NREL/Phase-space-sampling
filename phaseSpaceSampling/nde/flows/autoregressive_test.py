@@ -1,14 +1,14 @@
 """Tests for autoregressive flows."""
 
+import unittest
+
 import torch
 import torchtestcase
-import unittest
 
 from phaseSpaceSampling.nde.flows import autoregressive as ar
 
 
 class MaskedAutoregressiveFlowTest(torchtestcase.TorchTestCase):
-
     def test_log_prob(self):
         batch_size = 10
         features = 20
@@ -37,5 +37,5 @@ class MaskedAutoregressiveFlowTest(torchtestcase.TorchTestCase):
         self.assertEqual(samples.shape, torch.Size([num_samples, features]))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

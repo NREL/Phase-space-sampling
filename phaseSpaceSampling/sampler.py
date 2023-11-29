@@ -1,23 +1,21 @@
+import os
 import sys
+import time
 
 import numpy as np
 import torch
+from prettyPlot.progressBar import print_progress_bar
+from sklearn.neighbors import NearestNeighbors
 from torch import optim
 from torch.nn.utils import clip_grad_norm_
 from torch.utils import data
 from torch.utils.data import DataLoader
 
-import os
-import time
-
-import phaseSpaceSampling.utils.parallel as par
-from phaseSpaceSampling.utils.flowUtils import create_base_transform 
-from phaseSpaceSampling.utils.torchutils import tensor2numpy
-from prettyPlot.progressBar import print_progress_bar
-from sklearn.neighbors import NearestNeighbors
-
 import phaseSpaceSampling.nn as nn_
+import phaseSpaceSampling.utils.parallel as par
 from phaseSpaceSampling.nde import distributions, flows, transforms
+from phaseSpaceSampling.utils.flowUtils import create_base_transform
+from phaseSpaceSampling.utils.torchutils import tensor2numpy
 
 
 def str2float(str):
@@ -195,7 +193,7 @@ def trainFlow(np_data, flow, pdf_iter, inpt):
         prefix="Loss = ? Step %d / %d " % (0, totalSteps),
         suffix="Complete",
         length=50,
-        extraCond=(par.irank==par.iroot),
+        extraCond=(par.irank == par.iroot),
     )
     for epoch in range(EPOCHS):
         for step, batch in enumerate(data_loader):
@@ -216,7 +214,7 @@ def trainFlow(np_data, flow, pdf_iter, inpt):
                 % (loss.item(), epoch * nBatch + step + 1, totalSteps),
                 suffix="Complete",
                 length=50,
-                extraCond=(par.irank==par.iroot),
+                extraCond=(par.irank == par.iroot),
             )
             if ((epoch * nBatch + step + 1) % 10) == 0:
                 logTraining(epoch * nBatch + step + 1, loss, pdf_iter)
@@ -372,7 +370,7 @@ def evalLogProbNF(flow, np_data_to_downsample, pdf_iter, inpt):
         prefix="Eval Step %d / %d " % (0, nBatch),
         suffix="Complete",
         length=50,
-        extraCond=(par.irank==par.iroot),
+        extraCond=(par.irank == par.iroot),
     )
     for step, batch in enumerate(to_downsample_loader):
         batch = batch.to(device)
@@ -386,7 +384,7 @@ def evalLogProbNF(flow, np_data_to_downsample, pdf_iter, inpt):
             prefix="Eval Step %d / %d " % (step + 1, nBatch),
             suffix="Complete",
             length=50,
-            extraCond=(par.irank==par.iroot),
+            extraCond=(par.irank == par.iroot),
         )
 
     # Timer

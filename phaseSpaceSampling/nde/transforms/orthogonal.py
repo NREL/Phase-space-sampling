@@ -1,11 +1,11 @@
 """Implementations of orthogonal transforms."""
 
 import torch
-
 from torch import nn
 
 from phaseSpaceSampling.nde import transforms
 from phaseSpaceSampling.utils.typechecks import is_positive_int
+
 
 class HouseholderSequence(transforms.Transform):
     """A sequence of Householder transforms.
@@ -24,9 +24,9 @@ class HouseholderSequence(transforms.Transform):
             TypeError: if arguments are not the right type.
         """
         if not is_positive_int(features):
-            raise TypeError('Number of features must be a positive integer.')
+            raise TypeError("Number of features must be a positive integer.")
         if not is_positive_int(num_transforms):
-            raise TypeError('Number of transforms must be a positive integer.')
+            raise TypeError("Number of transforms must be a positive integer.")
 
         super().__init__()
         self.features = features
@@ -52,11 +52,13 @@ class HouseholderSequence(transforms.Transform):
             - A Tensor of shape [N, D], the outputs.
             - A Tensor of shape [N], the log absolute determinants of the total transform.
         """
-        squared_norms = torch.sum(q_vectors ** 2, dim=-1)
+        squared_norms = torch.sum(q_vectors**2, dim=-1)
         outputs = inputs
         for q_vector, squared_norm in zip(q_vectors, squared_norms):
             temp = outputs @ q_vector  # Inner product.
-            temp = torch.ger(temp, (2.0 / squared_norm) * q_vector)  # Outer product.
+            temp = torch.ger(
+                temp, (2.0 / squared_norm) * q_vector
+            )  # Outer product.
             outputs = outputs - temp
         batch_size = inputs.shape[0]
         logabsdet = torch.zeros(batch_size)

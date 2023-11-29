@@ -1,8 +1,8 @@
 import numpy as np
 import torch
-
 from torch import nn
-from torch.nn import functional as F, init
+from torch.nn import functional as F
+from torch.nn import init
 
 from phaseSpaceSampling.nde import transforms
 from phaseSpaceSampling.nde.transforms.linear import Linear
@@ -23,7 +23,8 @@ class QRLinear(Linear):
 
         # Parameterization for Q
         self.orthogonal = transforms.HouseholderSequence(
-            features=features, num_transforms=num_householder)
+            features=features, num_transforms=num_householder
+        )
 
         self._initialize()
 
@@ -35,8 +36,12 @@ class QRLinear(Linear):
 
     def _create_upper(self):
         upper = torch.zeros(self.features, self.features)
-        upper[self.upper_indices[0], self.upper_indices[1]] = self.upper_entries
-        upper[self.diag_indices[0], self.diag_indices[1]] = torch.exp(self.log_upper_diag)
+        upper[
+            self.upper_indices[0], self.upper_indices[1]
+        ] = self.upper_entries
+        upper[self.diag_indices[0], self.diag_indices[1]] = torch.exp(
+            self.log_upper_diag
+        )
         return upper
 
     def forward_no_cache(self, inputs):
@@ -51,7 +56,9 @@ class QRLinear(Linear):
         upper = self._create_upper()
 
         outputs = F.linear(inputs, upper)
-        outputs, _ = self.orthogonal(outputs)  # Ignore logabsdet as we know it's zero.
+        outputs, _ = self.orthogonal(
+            outputs
+        )  # Ignore logabsdet as we know it's zero.
         outputs += self.bias
 
         logabsdet = self.logabsdet() * torch.ones(outputs.shape[0])
@@ -69,7 +76,9 @@ class QRLinear(Linear):
         """
         upper = self._create_upper()
         outputs = inputs - self.bias
-        outputs, _ = self.orthogonal.inverse(outputs)  # Ignore logabsdet since we know it's zero.
+        outputs, _ = self.orthogonal.inverse(
+            outputs
+        )  # Ignore logabsdet since we know it's zero.
         outputs, _ = torch.trtrs(outputs.t(), upper, upper=True)
         outputs = outputs.t()
         logabsdet = -self.logabsdet()

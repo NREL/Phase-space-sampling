@@ -3,9 +3,12 @@
 import numpy as np
 import torch
 
-
 from phaseSpaceSampling.nde import distributions
-from phaseSpaceSampling.utils.torchutils import sum_except_batch, split_leading_dim, repeat_rows
+from phaseSpaceSampling.utils.torchutils import (
+    repeat_rows,
+    split_leading_dim,
+    sum_except_batch,
+)
 
 
 class StandardNormal(distributions.Distribution):
@@ -19,9 +22,12 @@ class StandardNormal(distributions.Distribution):
     def _log_prob(self, inputs, context):
         # Note: the context is ignored.
         if inputs.shape[1:] != self._shape:
-            raise ValueError('Expected input of shape {}, got {}'.format(
-                self._shape, inputs.shape[1:]))
-        neg_energy = -0.5 * sum_except_batch(inputs ** 2, num_batch_dims=1)
+            raise ValueError(
+                "Expected input of shape {}, got {}".format(
+                    self._shape, inputs.shape[1:]
+                )
+            )
+        neg_energy = -0.5 * sum_except_batch(inputs**2, num_batch_dims=1)
         return neg_energy - self._log_z
 
     def _sample(self, num_samples, context):
@@ -63,15 +69,17 @@ class ConditionalDiagonalNormal(distributions.Distribution):
     def _compute_params(self, context):
         """Compute the means and log stds form the context."""
         if context is None:
-            raise ValueError('Context can\'t be None.')
+            raise ValueError("Context can't be None.")
 
         params = self._context_encoder(context)
         if params.shape[-1] % 2 != 0:
             raise RuntimeError(
-                'The context encoder must return a tensor whose last dimension is even.')
+                "The context encoder must return a tensor whose last dimension is even."
+            )
         if params.shape[0] != context.shape[0]:
             raise RuntimeError(
-                'The batch dimension of the parameters is inconsistent with the input.')
+                "The batch dimension of the parameters is inconsistent with the input."
+            )
 
         split = params.shape[-1] // 2
         means = params[..., :split].reshape(params.shape[0], *self._shape)
@@ -80,8 +88,11 @@ class ConditionalDiagonalNormal(distributions.Distribution):
 
     def _log_prob(self, inputs, context):
         if inputs.shape[1:] != self._shape:
-            raise ValueError('Expected input of shape {}, got {}'.format(
-                self._shape, inputs.shape[1:]))
+            raise ValueError(
+                "Expected input of shape {}, got {}".format(
+                    self._shape, inputs.shape[1:]
+                )
+            )
 
         # Compute parameters.
         means, log_stds = self._compute_params(context)
@@ -89,7 +100,7 @@ class ConditionalDiagonalNormal(distributions.Distribution):
 
         # Compute log prob.
         norm_inputs = (inputs - means) * torch.exp(-log_stds)
-        log_prob = -0.5 * sum_except_batch(norm_inputs ** 2, num_batch_dims=1)
+        log_prob = -0.5 * sum_except_batch(norm_inputs**2, num_batch_dims=1)
         log_prob -= sum_except_batch(log_stds, num_batch_dims=1)
         log_prob -= self._log_z
         return log_prob

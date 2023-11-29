@@ -1,7 +1,8 @@
 """Tests for the normalization-based transforms."""
 
-import torch
 import unittest
+
+import torch
 
 from phaseSpaceSampling.nde.transforms import base
 from phaseSpaceSampling.nde.transforms import normalization as norm
@@ -9,7 +10,6 @@ from phaseSpaceSampling.nde.transforms.transform_test import TransformTest
 
 
 class BatchNormTest(TransformTest):
-
     def test_forward(self):
         features = 100
         batch_size = 50
@@ -19,7 +19,9 @@ class BatchNormTest(TransformTest):
         for affine in [True, True]:
             with self.subTest(affine=affine):
                 inputs = torch.randn(batch_size, features)
-                transform = norm.BatchNorm(features=features, affine=affine, eps=bn_eps)
+                transform = norm.BatchNorm(
+                    features=features, affine=affine, eps=bn_eps
+                )
 
                 outputs, logabsdet = transform(inputs)
                 self.assert_tensor_is_good(outputs, [batch_size, features])
@@ -27,7 +29,9 @@ class BatchNormTest(TransformTest):
 
                 mean, var = inputs.mean(0), inputs.var(0)
                 outputs_ref = (inputs - mean) / torch.sqrt(var + bn_eps)
-                logabsdet_ref = torch.sum(torch.log(1.0 / torch.sqrt(var + bn_eps)))
+                logabsdet_ref = torch.sum(
+                    torch.log(1.0 / torch.sqrt(var + bn_eps))
+                )
                 logabsdet_ref = torch.full([batch_size], logabsdet_ref.item())
                 if affine:
                     outputs_ref *= transform.weight
@@ -47,7 +51,9 @@ class BatchNormTest(TransformTest):
                 mean = transform.running_mean
                 var = transform.running_var
                 outputs_ref = (inputs - mean) / torch.sqrt(var + bn_eps)
-                logabsdet_ref = torch.sum(torch.log(1.0 / torch.sqrt(var + bn_eps)))
+                logabsdet_ref = torch.sum(
+                    torch.log(1.0 / torch.sqrt(var + bn_eps))
+                )
                 logabsdet_ref = torch.full([batch_size], logabsdet_ref.item())
                 if affine:
                     outputs_ref *= transform.weight
@@ -89,11 +95,9 @@ class BatchNormTest(TransformTest):
 
 
 class ActNormTest(TransformTest):
-
     def test_forward(self):
         batch_size = 50
-        for shape in [(100,),
-                      (32,8,8)]:
+        for shape in [(100,), (32, 8, 8)]:
             with self.subTest(shape=shape):
                 inputs = torch.randn(batch_size, *shape)
                 transform = norm.ActNorm(shape[0])
@@ -104,8 +108,7 @@ class ActNormTest(TransformTest):
 
     def test_inverse(self):
         batch_size = 50
-        for shape in [(100,),
-                      (32,8,8)]:
+        for shape in [(100,), (32, 8, 8)]:
             with self.subTest(shape=shape):
                 inputs = torch.randn(batch_size, *shape)
                 transform = norm.ActNorm(shape[0])
@@ -116,15 +119,14 @@ class ActNormTest(TransformTest):
 
     def test_forward_inverse_are_consistent(self):
         batch_size = 50
-        for shape in [(100,),
-                      (32,8,8)]:
+        for shape in [(100,), (32, 8, 8)]:
             with self.subTest(shape=shape):
                 inputs = torch.randn(batch_size, *shape)
                 transform = norm.ActNorm(shape[0])
-                transform.forward(inputs) # One forward pass to initialize
+                transform.forward(inputs)  # One forward pass to initialize
                 self.eps = 1e-6
                 self.assert_forward_inverse_are_consistent(transform, inputs)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

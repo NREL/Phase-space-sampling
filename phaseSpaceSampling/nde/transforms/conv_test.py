@@ -1,5 +1,6 @@
-import torch
 import unittest
+
+import torch
 
 from phaseSpaceSampling.nde import transforms
 from phaseSpaceSampling.nde.transforms.transform_test import TransformTest
@@ -15,5 +16,5 @@ class OneByOneConvolutionTest(TransformTest):
         self.assert_forward_inverse_are_consistent(transform, inputs)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

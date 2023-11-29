@@ -3,10 +3,8 @@
 import torch
 from torch.nn import functional as F
 
-from phaseSpaceSampling.nde import distributions
-from phaseSpaceSampling.nde import flows
-from phaseSpaceSampling.nde import transforms
 import phaseSpaceSampling.nn as nn_
+from phaseSpaceSampling.nde import distributions, flows, transforms
 
 
 class SimpleRealNVP(flows.Flow):
@@ -18,17 +16,18 @@ class SimpleRealNVP(flows.Flow):
     > L. Dinh et al., Density estimation using Real NVP, ICLR 2017.
     """
 
-    def __init__(self,
-                 features,
-                 hidden_features,
-                 num_layers,
-                 num_blocks_per_layer,
-                 use_volume_preserving=False,
-                 activation=F.relu,
-                 dropout_probability=0.,
-                 batch_norm_within_layers=False,
-                 batch_norm_between_layers=False):
-
+    def __init__(
+        self,
+        features,
+        hidden_features,
+        num_layers,
+        num_blocks_per_layer,
+        use_volume_preserving=False,
+        activation=F.relu,
+        dropout_probability=0.0,
+        batch_norm_within_layers=False,
+        batch_norm_between_layers=False,
+    ):
         if use_volume_preserving:
             coupling_constructor = transforms.AdditiveCouplingTransform
         else:
@@ -45,14 +44,13 @@ class SimpleRealNVP(flows.Flow):
                 num_blocks=num_blocks_per_layer,
                 activation=activation,
                 dropout_probability=dropout_probability,
-                use_batch_norm=batch_norm_within_layers
+                use_batch_norm=batch_norm_within_layers,
             )
 
         layers = []
         for _ in range(num_layers):
             transform = coupling_constructor(
-                mask=mask,
-                transform_net_create_fn=create_resnet
+                mask=mask, transform_net_create_fn=create_resnet
             )
             layers.append(transform)
             mask *= -1

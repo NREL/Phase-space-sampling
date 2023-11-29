@@ -5,7 +5,10 @@ from torch.utils import data
 
 import phaseSpaceSampling.nn as nn_
 from phaseSpaceSampling.nde import distributions, flows, transforms
-from phaseSpaceSampling.utils.torchutils import create_alternating_binary_mask, create_random_binary_mask
+from phaseSpaceSampling.utils.torchutils import (
+    create_alternating_binary_mask,
+    create_random_binary_mask,
+)
 
 
 def create_base_transform(

@@ -2,16 +2,15 @@
 
 import numpy as np
 import torch
-
 from torch import nn
-from torch.nn import functional as F, init
+from torch.nn import functional as F
+from torch.nn import init
 
-
-from phaseSpaceSampling.nde import transforms
-
-from phaseSpaceSampling.utils.typechecks import is_positive_int, is_bool
-from phaseSpaceSampling.utils.torchutils import random_orthogonal
 import phaseSpaceSampling as pss
+from phaseSpaceSampling.nde import transforms
+from phaseSpaceSampling.utils.torchutils import random_orthogonal
+from phaseSpaceSampling.utils.typechecks import is_bool, is_positive_int
+
 
 class LinearCache(object):
     """Helper class to store the cache of a linear transform.
@@ -35,7 +34,7 @@ class Linear(transforms.Transform):
 
     def __init__(self, features, using_cache=False):
         if not is_positive_int(features):
-            raise TypeError('Number of features must be a positive integer.')
+            raise TypeError("Number of features must be a positive integer.")
         super().__init__()
 
         self.features = features
@@ -56,7 +55,10 @@ class Linear(transforms.Transform):
 
     def _check_forward_cache(self):
         if self.cache.weight is None and self.cache.logabsdet is None:
-            self.cache.weight, self.cache.logabsdet = self.weight_and_logabsdet()
+            (
+                self.cache.weight,
+                self.cache.logabsdet,
+            ) = self.weight_and_logabsdet()
 
         elif self.cache.weight is None:
             self.cache.weight = self.weight()
@@ -75,7 +77,10 @@ class Linear(transforms.Transform):
 
     def _check_inverse_cache(self):
         if self.cache.inverse is None and self.cache.logabsdet is None:
-            self.cache.inverse, self.cache.logabsdet = self.weight_inverse_and_logabsdet()
+            (
+                self.cache.inverse,
+                self.cache.logabsdet,
+            ) = self.weight_inverse_and_logabsdet()
 
         elif self.cache.inverse is None:
             self.cache.inverse = self.weight_inverse()
@@ -91,7 +96,7 @@ class Linear(transforms.Transform):
 
     def use_cache(self, mode=True):
         if not is_bool(mode):
-            raise TypeError('Mode must be boolean.')
+            raise TypeError("Mode must be boolean.")
         self.using_cache = mode
 
     def weight_and_logabsdet(self):
@@ -135,7 +140,9 @@ class NaiveLinear(Linear):
     of the input.
     """
 
-    def __init__(self, features, orthogonal_initialization=True, using_cache=False):
+    def __init__(
+        self, features, orthogonal_initialization=True, using_cache=False
+    ):
         """Constructor.
 
         Args:
@@ -179,7 +186,9 @@ class NaiveLinear(Linear):
         """
         batch_size = inputs.shape[0]
         outputs = inputs - self.bias
-        outputs, lu = torch.gesv(outputs.t(), self._weight)  # Linear-system solver.
+        outputs, lu = torch.gesv(
+            outputs.t(), self._weight
+        )  # Linear-system solver.
         outputs = outputs.t()
         # The linear-system solver returns the LU decomposition of the weights, which we
         # can use to obtain the log absolute determinant directly.
@@ -189,7 +198,7 @@ class NaiveLinear(Linear):
 
     def weight(self):
         """Cost:
-            weight = O(1)
+        weight = O(1)
         """
         return self._weight
 
@@ -212,7 +221,9 @@ class NaiveLinear(Linear):
         """
         # If both weight inverse and logabsdet are needed, it's cheaper to compute both together.
         identity = torch.eye(self.features, self.features)
-        weight_inv, lu = torch.gesv(identity, self._weight)  # Linear-system solver.
+        weight_inv, lu = torch.gesv(
+            identity, self._weight
+        )  # Linear-system solver.
         logabsdet = torch.sum(torch.log(torch.abs(torch.diag(lu))))
         return weight_inv, logabsdet
 

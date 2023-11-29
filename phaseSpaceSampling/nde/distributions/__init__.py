@@ -1,7 +1,3 @@
-from .base import Distribution
-from .base import NoMeanException
-
-from .normal import StandardNormal
-from .normal import ConditionalDiagonalNormal
-
+from .base import Distribution, NoMeanException
 from .discrete import ConditionalIndependentBernoulli
+from .normal import ConditionalDiagonalNormal, StandardNormal

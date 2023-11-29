@@ -1,13 +1,14 @@
+import os
 import sys
 
-import numpy as np
-
-import os
-
 import matplotlib.pyplot as plt
+import numpy as np
 from mpl_toolkits.axes_grid1 import make_axes_locatable
-from prettyPlot.plotting import pretty_labels
 from prettyPlot.parser import parse_input_file
+from prettyPlot.plotting import pretty_labels
+
+import phaseSpaceSampling.utils.parallel as par
+from phaseSpaceSampling import INPUT_DIR
 
 
 def plotScatterProjection(data, fullData, fieldNames, lims):
@@ -48,9 +49,11 @@ def plotScatterProjection(data, fullData, fieldNames, lims):
             tick.set_rotation(33)
         ax.set_ylim(lims[1])
 
-    plt.tight_layout() 
+    plt.tight_layout()
+
 
 import argparse
+
 parser = argparse.ArgumentParser(description="Visualize downsampled data")
 parser.add_argument(
     "-i",
@@ -66,8 +69,19 @@ args, unknown = parser.parse_known_args()
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # ~~~~ Parse input
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+inpt_file = args.input
+if not os.path.isfile(inpt_file):
+    new_inpt_file = os.path.join(INPUT_DIR, os.path.split(inpt_file)[-1])
+    par.printRoot(f"WARNING: {inpt_file} not found trying {new_inpt_file} ...")
+    if not os.path.isfile(new_inpt_file):
+        par.printRoot(
+            f"ERROR: could not open data {inpt_file} or {new_inpt_file}"
+        )
+        sys.exit()
+    else:
+        inpt_file = new_inpt_file
 
-inpt = parse_input_file(args.input)
+inpt = parse_input_file(inpt_file)
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # ~~~~ Parameters to save
@@ -120,7 +134,10 @@ for pdf_iter in range(int(inpt["num_pdf_iter"])):
         downSampledData = fullData[np.load(dataFile)["indices"], :]
         plotScatterProjection(downSampledData, fullData, fieldNames, lims)
         plt.savefig(
-            os.path.join(figureFolder, f"{inpt['prefixDownsampledData']}_{nSample}_it{pdf_iter}.png")
+            os.path.join(
+                figureFolder,
+                f"{inpt['prefixDownsampledData']}_{nSample}_it{pdf_iter}.png",
+            )
         )
         plt.close()
         print("DONE!")

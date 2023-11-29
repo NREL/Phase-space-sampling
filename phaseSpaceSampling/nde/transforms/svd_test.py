@@ -1,18 +1,21 @@
-import torch
 import unittest
 
+import torch
 
 from phaseSpaceSampling.nde.transforms import svd
 from phaseSpaceSampling.nde.transforms.transform_test import TransformTest
-
 from phaseSpaceSampling.utils.torchutils import logabsdet
 
-class SVDLinearTest(TransformTest):
 
+class SVDLinearTest(TransformTest):
     def setUp(self):
         self.features = 3
-        self.transform = svd.SVDLinear(features=self.features, num_householder=4)
-        self.transform.bias.data = torch.randn(self.features)  # Just so bias isn't zero.
+        self.transform = svd.SVDLinear(
+            features=self.features, num_householder=4
+        )
+        self.transform.bias.data = torch.randn(
+            self.features
+        )  # Just so bias isn't zero.
 
         diagonal = torch.diag(torch.exp(self.transform.log_diagonal))
         orthogonal_1 = self.transform.orthogonal_1.matrix()
@@ -58,7 +61,9 @@ class SVDLinearTest(TransformTest):
 
     def test_weight_inverse(self):
         weight_inverse = self.transform.weight_inverse()
-        self.assert_tensor_is_good(weight_inverse, [self.features, self.features])
+        self.assert_tensor_is_good(
+            weight_inverse, [self.features, self.features]
+        )
         self.assertEqual(weight_inverse, self.weight_inverse)
 
     def test_logabsdet(self):
@@ -72,5 +77,5 @@ class SVDLinearTest(TransformTest):
         self.assert_forward_inverse_are_consistent(self.transform, inputs)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

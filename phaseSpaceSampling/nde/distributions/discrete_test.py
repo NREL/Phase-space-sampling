@@ -1,13 +1,14 @@
 """Tests for discrete distributions."""
 
+import unittest
+
 import torch
 import torchtestcase
-import unittest
+
 from phaseSpaceSampling.nde.distributions import discrete
 
 
 class ConditionalIndependentBernoulliTest(torchtestcase.TorchTestCase):
-
     def test_log_prob(self):
         batch_size = 10
         input_shape = [2, 3, 4]
@@ -31,7 +32,10 @@ class ConditionalIndependentBernoulliTest(torchtestcase.TorchTestCase):
         context = torch.randn(context_size, *context_shape)
         samples = dist.sample(num_samples, context=context)
         self.assertIsInstance(samples, torch.Tensor)
-        self.assertEqual(samples.shape, torch.Size([context_size, num_samples] + input_shape))
+        self.assertEqual(
+            samples.shape,
+            torch.Size([context_size, num_samples] + input_shape),
+        )
         self.assertFalse(torch.isnan(samples).any())
         self.assertFalse(torch.isinf(samples).any())
         binary = (samples == 1.0) | (samples == 0.0)
@@ -45,13 +49,20 @@ class ConditionalIndependentBernoulliTest(torchtestcase.TorchTestCase):
 
         dist = discrete.ConditionalIndependentBernoulli(input_shape)
         context = torch.randn(context_size, *context_shape)
-        samples, log_prob = dist.sample_and_log_prob(num_samples, context=context)
+        samples, log_prob = dist.sample_and_log_prob(
+            num_samples, context=context
+        )
 
         self.assertIsInstance(samples, torch.Tensor)
         self.assertIsInstance(log_prob, torch.Tensor)
 
-        self.assertEqual(samples.shape, torch.Size([context_size, num_samples] + input_shape))
-        self.assertEqual(log_prob.shape, torch.Size([context_size, num_samples]))
+        self.assertEqual(
+            samples.shape,
+            torch.Size([context_size, num_samples] + input_shape),
+        )
+        self.assertEqual(
+            log_prob.shape, torch.Size([context_size, num_samples])
+        )
 
         self.assertFalse(torch.isnan(log_prob).any())
         self.assertFalse(torch.isinf(log_prob).any())
@@ -77,5 +88,5 @@ class ConditionalIndependentBernoulliTest(torchtestcase.TorchTestCase):
         self.assert_tensor_less_equal(means, 1.0)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

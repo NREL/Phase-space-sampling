@@ -1,14 +1,14 @@
 """Tests for multi-layer perceptrons."""
 
+import unittest
+
 import torch
 import torchtestcase
-import unittest
 
 from phaseSpaceSampling.nn import mlp
 
 
 class MLPTest(torchtestcase.TorchTestCase):
-
     def test_forward(self):
         batch_size = 10
         in_shape = [2, 3, 4]
@@ -24,7 +24,9 @@ class MLPTest(torchtestcase.TorchTestCase):
                 )
                 outputs = model(inputs)
                 self.assertIsInstance(outputs, torch.Tensor)
-                self.assertEqual(outputs.shape, torch.Size([batch_size] + out_shape))
+                self.assertEqual(
+                    outputs.shape, torch.Size([batch_size] + out_shape)
+                )
                 self.assertFalse(torch.isnan(outputs).any())
                 self.assertFalse(torch.isinf(outputs).any())
 
@@ -36,5 +38,5 @@ class MLPTest(torchtestcase.TorchTestCase):
             )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

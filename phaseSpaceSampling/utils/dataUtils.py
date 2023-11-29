@@ -1,5 +1,6 @@
-import sys
 import os
+import sys
+
 import numpy as np
 
 import phaseSpaceSampling.utils.parallel as par
@@ -37,12 +38,16 @@ def prepareData(inpt):
     dataFile = inpt["dataFile"]
     if not os.path.isfile(dataFile):
         new_dataFile = os.path.join(DATA_DIR, os.path.split(dataFile)[-1])
-        par.printRoot(f"WARNING: {dataFile} not found trying {new_dataFile} ...")
+        par.printRoot(
+            f"WARNING: {dataFile} not found trying {new_dataFile} ..."
+        )
         if not os.path.isfile(new_dataFile):
-             par.printRoot(f"ERROR: could not open data {dataFile} or {new_dataFile}")
-             sys.exit()
+            par.printRoot(
+                f"ERROR: could not open data {dataFile} or {new_dataFile}"
+            )
+            sys.exit()
         else:
-             dataFile = new_dataFile
+            dataFile = new_dataFile
     preShuffled = inpt["preShuffled"] == "True"
     scalerFile = inpt["scalerFile"]
     nWorkingDatas = [int(float(n)) for n in inpt["nWorkingData"].split()]

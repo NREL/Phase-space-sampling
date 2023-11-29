@@ -1,14 +1,14 @@
 """Tests for Real NVP."""
 
+import unittest
+
 import torch
 import torchtestcase
-import unittest
 
 from phaseSpaceSampling.nde.flows import realnvp
 
 
 class SimpleRealNVPTest(torchtestcase.TorchTestCase):
-
     def test_log_prob(self):
         batch_size = 10
         features = 20
@@ -37,5 +37,5 @@ class SimpleRealNVPTest(torchtestcase.TorchTestCase):
         self.assertEqual(samples.shape, torch.Size([num_samples, features]))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

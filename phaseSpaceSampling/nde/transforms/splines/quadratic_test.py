@@ -3,10 +3,11 @@ import torchtestcase
 
 from phaseSpaceSampling.nde.transforms import splines
 
+
 class QuadraticSplineTest(torchtestcase.TorchTestCase):
     def test_forward_inverse_are_consistent(self):
         num_bins = 10
-        shape = [2,3,4]
+        shape = [2, 3, 4]
 
         unnormalized_widths = torch.randn(*shape, num_bins)
         unnormalized_heights = torch.randn(*shape, num_bins + 1)
@@ -16,7 +17,7 @@ class QuadraticSplineTest(torchtestcase.TorchTestCase):
                 inputs=inputs,
                 unnormalized_widths=unnormalized_widths,
                 unnormalized_heights=unnormalized_heights,
-                inverse=inverse
+                inverse=inverse,
             )
 
         inputs = torch.rand(*shape)
@@ -25,12 +26,15 @@ class QuadraticSplineTest(torchtestcase.TorchTestCase):
 
         self.eps = 1e-4
         self.assertEqual(inputs, inputs_inv)
-        self.assertEqual(logabsdet + logabsdet_inv, torch.zeros_like(logabsdet))
+        self.assertEqual(
+            logabsdet + logabsdet_inv, torch.zeros_like(logabsdet)
+        )
+
 
 class UnconstrainedQuadraticSplineTest(torchtestcase.TorchTestCase):
     def test_forward_inverse_are_consistent(self):
         num_bins = 10
-        shape = [2,3,4]
+        shape = [2, 3, 4]
 
         unnormalized_widths = torch.randn(*shape, num_bins)
         unnormalized_heights = torch.randn(*shape, num_bins - 1)
@@ -40,13 +44,15 @@ class UnconstrainedQuadraticSplineTest(torchtestcase.TorchTestCase):
                 inputs=inputs,
                 unnormalized_widths=unnormalized_widths,
                 unnormalized_heights=unnormalized_heights,
-                inverse=inverse
+                inverse=inverse,
             )
 
-        inputs = 3 * torch.randn(*shape) # Note inputs are outside [0,1].
+        inputs = 3 * torch.randn(*shape)  # Note inputs are outside [0,1].
         outputs, logabsdet = call_spline_fn(inputs, inverse=False)
         inputs_inv, logabsdet_inv = call_spline_fn(outputs, inverse=True)
 
         self.eps = 1e-4
         self.assertEqual(inputs, inputs_inv)
-        self.assertEqual(logabsdet + logabsdet_inv, torch.zeros_like(logabsdet))
+        self.assertEqual(
+            logabsdet + logabsdet_inv, torch.zeros_like(logabsdet)
+        )
