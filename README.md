@@ -10,30 +10,26 @@
 
 1. `conda create --name uips python=3.10`
 2. `conda activate uips`
-3. `pip install -r requirements.txt`
+3. `pip install .`
 
 ## Purpose
 
 The purpose of the tool is to perform a smart downselection of a large number of datapoints. Typically, large numerical simulations generate billions, or even trillions of datapoints. However, there may be redundancy in the dataset which unnecessarily constrains memory and computing requirements. Here, redundancy is defined as closeness in feature space. The method is called phase-space sampling.
 
-## Running the example without poetry
+## Running the example
 
-`bash run2D.sh`: Example of downsampling a 2D combustion dataset. First the downsampling is performed (`mpiexec -np 4 python main_iterative.py input`). Then the loss function for each flow iteration is plotted (`python plotLoss.py input`). Finally, the samples are visualized (`python visualizeDownSampled_subplots.py input`). All figures are saved under the folder `Figures`.
-
-## Running the example with poetry
-
-Add `poetry run` before `python ...`
+`bash tests/run2D.sh`: Example of downsampling a 2D combustion dataset. First the downsampling is performed (`mpiexec -np 4 python main.py -i inputs/input2D`). Then the loss function for each flow iteration is plotted (`python postProcess/plotLoss.py -i inputs/input2D`). Finally, the samples are visualized (`python postProcess/visualizeDownSampled_subplots.py -i inputs/input2D`). All figures are saved under the folder `Figures`.
 
 ## Parallelization
 
-The code is GPU+MPI-parallelized: a) the dataset is loaded and shuffled in parallel b) the probability evaluation (the most expensive step) is done in parallel c) downsampling is done in parallel d) only the training is offloaded to a GPU if available. Memory usage of root processor is higher than other since it is the only one in charge of the normalizing flow training and sampling probability adjustment. To run the code in parallel, `mpiexec -np num_procs python main_iterative.py input`.
+The code is GPU+MPI-parallelized: a) the dataset is loaded and shuffled in parallel b) the probability evaluation (the most expensive step) is done in parallel c) downsampling is done in parallel d) only the training is offloaded to a GPU if available. Memory usage of root processor is higher than other since it is the only one in charge of the normalizing flow training and sampling probability adjustment. To run the code in parallel, `mpiexec -np num_procs python main.py -i inputs/input2D`.
 
 In the code, arrays with suffix `_` denote data distributed over the processors.
 
 The computation of nearest neighbor distance is parallelized using the sklearn implementation. It will be accelerated on systems where hyperthreading is enabled (your laptop, but NOT the Eagle HPC)
 
-When using GPU+MPI-parallelism on Eagle, you need to specify the number of MPI tasks (`srun -n 36 python main_iterative.py`)
-When using MPI-parallelism alone on Eagle, you do not need to specify the number of MPI tasks (`srun python main_iterative.py`)
+When using GPU+MPI-parallelism on Eagle, you need to specify the number of MPI tasks (`srun -n 36 python main.py`)
+When using MPI-parallelism alone on Eagle, you do not need to specify the number of MPI tasks (`srun python main.py`)
 
 Running on GPU only accelerate execution by ~30% for the examples provided here. Running with many MPI-tasks linearly decreases the execution time for probability evaluation, as well as memory per core requirements.
 
@@ -51,9 +47,9 @@ The dataset to downsample has size $N \times d$ where $N \gg d$. The first dimen
 
 ## Hyperparameters
 
-All hyperparameters can be controlled via an input file (see `run2D.sh`).
+All hyperparameters can be controlled via an input file (see `tests/run2D.sh`).
 We recommend fixing the number of flow calculation iteration to 2.
-When increasing the number of dimensions, we recommend adjusting the hyperparameters. A 2-dimensional example (`input`) and an 11-dimensional (`highdim/input11D`) example are provided to guide the user.
+When increasing the number of dimensions, we recommend adjusting the hyperparameters. A 2-dimensional example (`inputs/input2D`) and an 11-dimensional (`inputs/highdim/input11D`) example are provided to guide the user.
 
 ## Sanity checks
 
@@ -67,7 +63,7 @@ The computational cost associated with the nearest neighbor computations scales 
 
 During training of the normalizing flow, the negative log likelihood is displayed. The user should ensure that the normalizing flow has learned something useful about the distribution by ensuring that the loss is close to being converged. The log of the loss is displayed as a csv file in the folder `TrainingLog`. The loss of the second training iteration should be higher than the first iteration. If this is not the case or if more iterations are needed, the normalizing flow trained may need to be better converged. A warning message will be issued in that case.
 
-A script is provided to visualize the losses. Execute `python plotLoss.py input` where `input` is the name of the input file used to perform the downsampling.
+A script is provided to visualize the losses. Execute `python plotLoss.py -i inputs/input2D` where `input2D` is the name of the input file used to perform the downsampling.
 
 ## Example 2D
 
@@ -94,7 +90,7 @@ For comparison, a random sampling gives the following result
 
 ## Example 11D
 
-Input file is provided in `highdim/input11D`
+Input file is provided in `inputs/highdim/input11D`
 
 ## Data efficient ML
 
