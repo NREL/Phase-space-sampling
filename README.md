@@ -6,16 +6,11 @@
 
 ## Installation for other users
 
-### Option 1: From `conda` (recommended)
+### From `conda`
 
 1. `conda create --name uips python=3.10`
 2. `conda activate uips`
 3. `pip install -r requirements.txt`
-
-### Option 2: From `poetry`
-
-This requires [poetry](https://python-poetry.org/docs/#installation)
-1. `poetry update`
 
 ## Purpose
 
@@ -79,22 +74,22 @@ A script is provided to visualize the losses. Execute `python plotLoss.py input`
 Suppose one wants to downsample an dataset where $N=10^7$ and $d=2$. First, the code estimates the probability map of the data in order to identify where are located redundant data points. An example dataset (left) and associated probability map (right) are shown below
 
 <p float="left">
-  <img src="readmeImages/fulldataset.png" width="350"/>
-  <img src="readmeImages/probabilityMap.png" width="350"/>
+  <img src="documentation/readmeImages/fulldataset.png" width="350"/>
+  <img src="documentation/readmeImages/probabilityMap.png" width="350"/>
 </p>
 
 Next, the code uses the probability map to define a sampling probability which downselect samples that uniformly span the feature space. The probability map is obtained by training a Neural Spline Flow which implementation was obtained from [Neural Spline Flow repository](https://github.com/bayesiains/nsf). The number of samples in the final dataset can be controlled via the input file.
 
 <p float="left">
-  <img src="readmeImages/103_phaseSpaceSampling.png" width="350"/> 
-  <img src="readmeImages/104_phaseSpaceSampling.png" width="350"/>
+  <img src="documentation/readmeImages/103_phaseSpaceSampling.png" width="350"/> 
+  <img src="documentation/readmeImages/104_phaseSpaceSampling.png" width="350"/>
 </p>
 
 For comparison, a random sampling gives the following result
 
 <p float="left">
-  <img src="readmeImages/103_randomSampling.png" width="350"/> 
-  <img src="readmeImages/104_randomSampling.png" width="350"/>
+  <img src="documentation/readmeImages/103_randomSampling.png" width="350"/> 
+  <img src="documentation/readmeImages/104_randomSampling.png" width="350"/>
 </p>
 
 ## Example 11D

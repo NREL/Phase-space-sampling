@@ -9,7 +9,7 @@ import torch
 import argparse
 import time
 
-import phaseSpaceSampling.utils.parallel as par
+from phaseSpaceSampling.utils import parallel as par
 from phaseSpaceSampling.utils.dataUtils import prepareData
 from phaseSpaceSampling.utils.torchutils import get_num_parameters
 from phaseSpaceSampling.utils.plotFun import *
