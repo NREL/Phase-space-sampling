@@ -4,7 +4,10 @@ import torch
 from torch import nn
 from torch.nn import functional as F
 
-from phaseSpaceSampling.nde.transforms.base import Transform, InverseNotAvailable
+from phaseSpaceSampling.nde.transforms.base import (
+    InverseNotAvailable,
+    Transform,
+)
 from phaseSpaceSampling.utils.typechecks import is_positive_int
 
 # class BatchNorm(Transform):

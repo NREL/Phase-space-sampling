@@ -2,8 +2,8 @@
 
 from torch.nn import functional as F
 
-from phaseSpaceSampling.nde.flows.base import Flow
 from phaseSpaceSampling.nde import distributions, transforms
+from phaseSpaceSampling.nde.flows.base import Flow
 
 
 class MaskedAutoregressiveFlow(Flow):

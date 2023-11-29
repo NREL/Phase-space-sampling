@@ -4,9 +4,9 @@ import numpy as np
 import torch
 from torch.nn import functional as F
 
-from phaseSpaceSampling.nde.transforms.base import Transform
 from phaseSpaceSampling.nde.transforms import made as made_module
 from phaseSpaceSampling.nde.transforms import splines
+from phaseSpaceSampling.nde.transforms.base import Transform
 from phaseSpaceSampling.utils.torchutils import sum_except_batch
 
 

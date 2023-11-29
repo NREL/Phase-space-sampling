@@ -2,7 +2,7 @@ import unittest
 
 import torch
 
-from phaseSpaceSampling.nde.reshape SqueezeTransform
+from phaseSpaceSampling.nde.reshape import SqueezeTransform
 from phaseSpaceSampling.nde.transforms.transform_test import TransformTest
 
 

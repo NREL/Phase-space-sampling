@@ -5,8 +5,13 @@ import torch
 from torch import nn
 from torch.nn import functional as F
 
-from phaseSpaceSampling.nde.transforms.base import Transform, InputOutsideDomain, InverseTransform, CompositeTransform
 from phaseSpaceSampling.nde.transforms import splines
+from phaseSpaceSampling.nde.transforms.base import (
+    CompositeTransform,
+    InputOutsideDomain,
+    InverseTransform,
+    Transform,
+)
 from phaseSpaceSampling.utils.torchutils import sum_except_batch
 
 

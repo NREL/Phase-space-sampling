@@ -4,8 +4,8 @@ from torch import nn
 from torch.nn import functional as F
 from torch.nn import init
 
-from phaseSpaceSampling.nde.transforms.orthogonal import HouseholderSequence
 from phaseSpaceSampling.nde.transforms.linear import Linear
+from phaseSpaceSampling.nde.transforms.orthogonal import HouseholderSequence
 
 
 class QRLinear(Linear):
