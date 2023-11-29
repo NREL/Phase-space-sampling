@@ -1,8 +1,6 @@
-import import
-import sum_except_batch
 from torch import distributions
 
-import phaseSpaceSampling.utils.torchutils
+from phaseSpaceSampling.utils.torchutils import sum_except_batch
 
 
 class TweakedUniform(distributions.Uniform):
@@ -15,4 +13,4 @@ class TweakedUniform(distributions.Uniform):
         #     return result
 
     def sample(self, num_samples, context):
-        return super().sample((num_samples, ))
+        return super().sample((num_samples,))
