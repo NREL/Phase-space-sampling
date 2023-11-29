@@ -2,13 +2,13 @@ import unittest
 
 import torch
 
-from phaseSpaceSampling.nde import transforms
+from phaseSpaceSampling.nde.reshape SqueezeTransform
 from phaseSpaceSampling.nde.transforms.transform_test import TransformTest
 
 
 class SqueezeTransformTest(TransformTest):
     def setUp(self):
-        self.transform = transforms.SqueezeTransform()
+        self.transform = SqueezeTransform()
 
     def test_forward(self):
         batch_size = 10

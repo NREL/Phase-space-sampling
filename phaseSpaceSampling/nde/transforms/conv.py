@@ -1,8 +1,9 @@
-from phaseSpaceSampling.nde import transforms
+from phaseSpaceSampling.nde.transforms.lu import LULinear
+from phaseSpaceSampling.nde.transforms.permutations import RandomPermutation
 from phaseSpaceSampling.utils.torchutils import sum_except_batch
 
 
-class OneByOneConvolution(transforms.LULinear):
+class OneByOneConvolution(LULinear):
     """An invertible 1x1 convolution with a fixed permutation, as introduced in the Glow paper.
 
     Reference:
@@ -11,7 +12,7 @@ class OneByOneConvolution(transforms.LULinear):
 
     def __init__(self, num_channels, using_cache=False, identity_init=True):
         super().__init__(num_channels, using_cache, identity_init)
-        self.permutation = transforms.RandomPermutation(num_channels, dim=1)
+        self.permutation = RandomPermutation(num_channels, dim=1)
 
     def _lu_forward_inverse(self, inputs, inverse=False):
         b, c, h, w = inputs.shape

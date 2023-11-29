@@ -2,7 +2,7 @@ import unittest
 
 import torch
 
-from phaseSpaceSampling.nde import transforms
+from phaseSpaceSampling.nde.conv import OneByOneConvolution
 from phaseSpaceSampling.nde.transforms.transform_test import TransformTest
 
 
@@ -11,7 +11,7 @@ class OneByOneConvolutionTest(TransformTest):
         batch_size = 10
         c, h, w = 3, 28, 28
         inputs = torch.randn(batch_size, c, h, w)
-        transform = transforms.OneByOneConvolution(c)
+        transform = OneByOneConvolution(c)
         self.eps = 1e-6
         self.assert_forward_inverse_are_consistent(transform, inputs)
 

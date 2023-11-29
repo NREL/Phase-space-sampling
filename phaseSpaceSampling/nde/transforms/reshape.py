@@ -1,10 +1,10 @@
 import torch
 
-from phaseSpaceSampling.nde import transforms
+from phaseSpaceSampling.nde.transforms.base import Transform
 from phaseSpaceSampling.utils.typechecks import is_int
 
 
-class SqueezeTransform(transforms.Transform):
+class SqueezeTransform(Transform):
     """A transformation defined for image data that trades spatial dimensions for channel
     dimensions, i.e. "squeezes" the inputs along the channel dimensions.
 
@@ -79,7 +79,7 @@ class SqueezeTransform(transforms.Transform):
         return inputs, torch.zeros(batch_size)
 
 
-class ReshapeTransform(transforms.Transform):
+class ReshapeTransform(Transform):
     def __init__(self, input_shape, output_shape):
         super().__init__()
         self.input_shape = input_shape

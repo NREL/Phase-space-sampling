@@ -3,7 +3,7 @@ import math
 import torch
 from torch.nn import functional as F
 
-from phaseSpaceSampling.nde import transforms
+from phaseSpaceSampling.nde.transforms.base import InputOutsideDomain
 from phaseSpaceSampling.utils.torchutils import cbrt, searchsorted
 
 DEFAULT_MIN_BIN_WIDTH = 1e-3
@@ -87,9 +87,9 @@ def cubic_spline(
     Graphics and Applications, 27(3):78–89.
     """
     if not inverse and (torch.min(inputs) < left or torch.max(inputs) > right):
-        raise transforms.InputOutsideDomain()
+        raise InputOutsideDomain()
     elif inverse and (torch.min(inputs) < bottom or torch.max(inputs) > top):
-        raise transforms.InputOutsideDomain()
+        raise InputOutsideDomain()
 
     num_bins = unnormalized_widths.shape[-1]
 

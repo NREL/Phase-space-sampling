@@ -4,7 +4,7 @@ import numpy as np
 import torch
 from torch.nn import functional as F
 
-from phaseSpaceSampling.nde import transforms
+from phaseSpaceSampling.nde.transforms.base import InputOutsideDomain
 from phaseSpaceSampling.utils.torchutils import searchsorted
 
 
@@ -53,9 +53,9 @@ def linear_spline(
     > Müller et al., Neural Importance Sampling, arXiv:1808.03856, 2018.
     """
     if not inverse and (torch.min(inputs) < left or torch.max(inputs) > right):
-        raise transforms.InputOutsideDomain()
+        raise InputOutsideDomain()
     elif inverse and (torch.min(inputs) < bottom or torch.max(inputs) > top):
-        raise transforms.InputOutsideDomain()
+        raise InputOutsideDomain()
 
     if inverse:
         inputs = (inputs - bottom) / (top - bottom)

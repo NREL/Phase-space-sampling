@@ -5,12 +5,13 @@ import numpy as np
 import torch
 from torch.nn import functional as F
 
-from phaseSpaceSampling.nde import transforms
+from phaseSpaceSampling.nde.transforms.base import Transform
+from phaseSpaceSampling.nde.transforms.nonlinearities import PiecewiseRationalQuadraticCDF, PiecewiseCubicCDF, PiecewiseLinearCDF, PiecewiseQuadraticCDF
 from phaseSpaceSampling.nde.transforms import splines
 from phaseSpaceSampling.utils.torchutils import sum_except_batch
 
 
-class CouplingTransform(transforms.Transform):
+class CouplingTransform(Transform):
     """A base class for coupling layers. Supports 2D inputs (NxD), as well as 4D inputs for
     images (NxCxHxW). For images the splitting is done on the channel dimension, using the
     provided 1D mask."""
@@ -248,7 +249,7 @@ class PiecewiseLinearCouplingTransform(PiecewiseCouplingTransform):
 
         if apply_unconditional_transform:
             unconditional_transform = (
-                lambda features: transforms.PiecewiseLinearCDF(
+                lambda features: PiecewiseLinearCDF(
                     shape=[features] + (img_shape if img_shape else []),
                     num_bins=num_bins,
                     tails=tails,
@@ -312,7 +313,7 @@ class PiecewiseQuadraticCouplingTransform(PiecewiseCouplingTransform):
 
         if apply_unconditional_transform:
             unconditional_transform = (
-                lambda features: transforms.PiecewiseQuadraticCDF(
+                lambda features: PiecewiseQuadraticCDF(
                     shape=[features] + (img_shape if img_shape else []),
                     num_bins=num_bins,
                     tails=tails,
@@ -386,7 +387,7 @@ class PiecewiseCubicCouplingTransform(PiecewiseCouplingTransform):
 
         if apply_unconditional_transform:
             unconditional_transform = (
-                lambda features: transforms.PiecewiseCubicCDF(
+                lambda features: PiecewiseCubicCDF(
                     shape=[features] + (img_shape if img_shape else []),
                     num_bins=num_bins,
                     tails=tails,
@@ -469,7 +470,7 @@ class PiecewiseRationalQuadraticCouplingTransform(PiecewiseCouplingTransform):
 
         if apply_unconditional_transform:
             unconditional_transform = (
-                lambda features: transforms.PiecewiseRationalQuadraticCDF(
+                lambda features: PiecewiseRationalQuadraticCDF(
                     shape=[features] + (img_shape if img_shape else []),
                     num_bins=num_bins,
                     tails=tails,

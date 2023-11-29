@@ -3,11 +3,11 @@
 import torch
 from torch import nn
 
-from phaseSpaceSampling.nde import transforms
+from phaseSpaceSampling.nde.transforms.base import Transform
 from phaseSpaceSampling.utils.typechecks import is_positive_int
 
 
-class HouseholderSequence(transforms.Transform):
+class HouseholderSequence(Transform):
     """A sequence of Householder transforms.
 
     This class can be used as a way of parameterizing an orthogonal matrix.

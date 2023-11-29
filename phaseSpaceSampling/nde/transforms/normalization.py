@@ -4,10 +4,10 @@ import torch
 from torch import nn
 from torch.nn import functional as F
 
-from phaseSpaceSampling.nde import transforms
+from phaseSpaceSampling.nde.transforms.base import Transform, InverseNotAvailable
 from phaseSpaceSampling.utils.typechecks import is_positive_int
 
-# class BatchNorm(transforms.Transform):
+# class BatchNorm(Transform):
 #     """Transform that performs batch normalization.
 #
 #     Limitations:
@@ -48,7 +48,7 @@ from phaseSpaceSampling.utils.typechecks import is_positive_int
 #
 #     def inverse(self, inputs):
 #         if self.training:
-#             raise transforms.InverseNotAvailable(
+#             raise InverseNotAvailable(
 #                 'Batch norm inverse is only available in eval mode, not in training mode.')
 #         if inputs.dim() != 2:
 #             raise ValueError('Expected 2-dim inputs, got inputs of shape: {}'.format(inputs.shape))
@@ -69,7 +69,7 @@ from phaseSpaceSampling.utils.typechecks import is_positive_int
 #         return outputs, logabsdet
 
 
-class BatchNorm(transforms.Transform):
+class BatchNorm(Transform):
     """Transform that performs batch normalization.
 
     Limitations:
@@ -126,7 +126,7 @@ class BatchNorm(transforms.Transform):
 
     def inverse(self, inputs, context=None):
         if self.training:
-            raise transforms.InverseNotAvailable(
+            raise InverseNotAvailable(
                 "Batch norm inverse is only available in eval mode, not in training mode."
             )
         if inputs.dim() != 2:
@@ -150,7 +150,7 @@ class BatchNorm(transforms.Transform):
         return outputs, logabsdet
 
 
-class ActNorm(transforms.Transform):
+class ActNorm(Transform):
     def __init__(self, features):
         """
         Transform that performs activation normalization. Works for 2D and 4D inputs. For 4D

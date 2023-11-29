@@ -3,7 +3,7 @@ import torch
 from torch import nn
 from torch.nn import init
 
-from phaseSpaceSampling.nde import transforms
+from phaseSpaceSampling.nde.transforms.orthogonal import HouseholderSequence
 from phaseSpaceSampling.nde.transforms.linear import Linear
 
 
@@ -14,7 +14,7 @@ class SVDLinear(Linear):
         super().__init__(features, using_cache)
 
         # First orthogonal matrix (U).
-        self.orthogonal_1 = transforms.HouseholderSequence(
+        self.orthogonal_1 = HouseholderSequence(
             features=features, num_transforms=num_householder
         )
 
@@ -22,7 +22,7 @@ class SVDLinear(Linear):
         self.log_diagonal = nn.Parameter(torch.zeros(features))
 
         # Second orthogonal matrix (V^T).
-        self.orthogonal_2 = transforms.HouseholderSequence(
+        self.orthogonal_2 = HouseholderSequence(
             features=features, num_transforms=num_householder
         )
 

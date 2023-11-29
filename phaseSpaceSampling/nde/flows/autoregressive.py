@@ -2,10 +2,11 @@
 
 from torch.nn import functional as F
 
-from phaseSpaceSampling.nde import distributions, flows, transforms
+from phaseSpaceSampling.nde.flows.base import Flow
+from phaseSpaceSampling.nde import distributions, transforms
 
 
-class MaskedAutoregressiveFlow(flows.Flow):
+class MaskedAutoregressiveFlow(Flow):
     """An autoregressive flow that uses affine transforms with masking.
 
     Reference:

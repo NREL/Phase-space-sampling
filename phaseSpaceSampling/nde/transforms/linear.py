@@ -7,7 +7,7 @@ from torch.nn import functional as F
 from torch.nn import init
 
 import phaseSpaceSampling as pss
-from phaseSpaceSampling.nde import transforms
+from phaseSpaceSampling.nde.transforms.base import Transform
 from phaseSpaceSampling.utils.torchutils import random_orthogonal
 from phaseSpaceSampling.utils.typechecks import is_bool, is_positive_int
 
@@ -29,7 +29,7 @@ class LinearCache(object):
         self.logabsdet = None
 
 
-class Linear(transforms.Transform):
+class Linear(Transform):
     """Abstract base class for linear transforms that parameterize a weight matrix."""
 
     def __init__(self, features, using_cache=False):

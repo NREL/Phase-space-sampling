@@ -2,7 +2,7 @@ import numpy as np
 import torch
 from torch.nn import functional as F
 
-from phaseSpaceSampling.nde import transforms
+from phaseSpaceSampling.nde.transforms.base import InputOutsideDomain
 from phaseSpaceSampling.utils.torchutils import searchsorted
 
 DEFAULT_MIN_BIN_WIDTH = 1e-3
@@ -77,7 +77,7 @@ def rational_quadratic_spline(
     min_derivative=DEFAULT_MIN_DERIVATIVE,
 ):
     if torch.min(inputs) < left or torch.max(inputs) > right:
-        raise transforms.InputOutsideDomain()
+        raise InputOutsideDomain()
 
     num_bins = unnormalized_widths.shape[-1]
 

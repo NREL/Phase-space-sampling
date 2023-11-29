@@ -2,11 +2,11 @@
 
 import torch
 
-from phaseSpaceSampling.nde import transforms
+from phaseSpaceSampling.nde.transforms.base import Transform
 from phaseSpaceSampling.utils.typechecks import is_positive_int
 
 
-class Permutation(transforms.Transform):
+class Permutation(Transform):
     """Permutes inputs on a given dimension using a given permutation."""
 
     def __init__(self, permutation, dim=1):

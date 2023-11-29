@@ -4,13 +4,13 @@ import numpy as np
 import torch
 from torch.nn import functional as F
 
-from phaseSpaceSampling.nde import transforms
+from phaseSpaceSampling.nde.transforms.base import Transform
 from phaseSpaceSampling.nde.transforms import made as made_module
 from phaseSpaceSampling.nde.transforms import splines
 from phaseSpaceSampling.utils.torchutils import sum_except_batch
 
 
-class AutoregressiveTransform(transforms.Transform):
+class AutoregressiveTransform(Transform):
     """Transforms each input variable with an invertible elementwise transformation.
 
     The parameters of each invertible elementwise transformation can be functions of previous input
