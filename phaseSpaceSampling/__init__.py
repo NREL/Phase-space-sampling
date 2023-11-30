@@ -2,8 +2,7 @@
 import os
 
 PSS_DIR = os.path.dirname(os.path.realpath(__file__))
-INPUT_DIR = os.path.join(PSS_DIR, "../inputs")
-DATA_DIR = os.path.join(PSS_DIR, "../data")
-DOC_DIR = os.path.join(PSS_DIR, "../documentation")
-ML_DIR = os.path.join(PSS_DIR, "../data-efficientML")
-UTIL_DIR = os.path.join(PSS_DIR, "../utils")
+PSS_INPUT_DIR = os.path.join(PSS_DIR, "../inputs")
+PSS_DATA_DIR = os.path.join(PSS_DIR, "../data")
+PSS_DOC_DIR = os.path.join(PSS_DIR, "../documentation")
+PSS_ML_DIR = os.path.join(PSS_DIR, "../data-efficientML")

@@ -2,12 +2,12 @@ import os
 import sys
 
 import phaseSpaceSampling.utils.parallel as par
-from phaseSpaceSampling import DATA_DIR, INPUT_DIR
+from phaseSpaceSampling import PSS_DATA_DIR, PSS_INPUT_DIR
 
 
 def find_input(inpt_file):
     if not os.path.isfile(inpt_file):
-        new_inpt_file = os.path.join(INPUT_DIR, os.path.split(inpt_file)[-1])
+        new_inpt_file = os.path.join(PSS_INPUT_DIR, os.path.split(inpt_file)[-1])
         par.printRoot(
             f"WARNING: {inpt_file} not found trying {new_inpt_file} ..."
         )
@@ -25,7 +25,7 @@ def find_input(inpt_file):
 
 def find_data(data_file):
     if not os.path.isfile(data_file):
-        new_data_file = os.path.join(DATA_DIR, os.path.split(data_file)[-1])
+        new_data_file = os.path.join(PSS_DATA_DIR, os.path.split(data_file)[-1])
         par.printRoot(
             f"WARNING: {data_file} not found trying {new_data_file} ..."
         )
