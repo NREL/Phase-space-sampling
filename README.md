@@ -4,7 +4,7 @@
 1. `module load openmpi/4.1.0/gcc-8.4.0`
 2. `conda activate /projects/mluq/condaEnvs/uips`
 
-## Installation developers
+## Installation for developers
 
 1. `conda create --name uips python=3.10`
 2. `conda activate uips`
