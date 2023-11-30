@@ -1,4 +1,5 @@
 import argparse
+
 from phaseSpaceSampling.wrapper import downsample_dataset_from_input
 
 parser = argparse.ArgumentParser(description="Downsampler")
