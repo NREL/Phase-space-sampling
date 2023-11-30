@@ -7,10 +7,10 @@ sys.path.append("util")
 import os
 import warnings
 
+from prettyPlot.progressBar import print_progress_bar
 from sklearn.gaussian_process.kernels import RBF
 from sklearn.gaussian_process.kernels import ConstantKernel as C
 from sklearn.gaussian_process.kernels import WhiteKernel
-from prettyPlot.progressBar import print_progress_bar
 
 
 def partitionData(nData, nBatch):

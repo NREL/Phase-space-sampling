@@ -2,13 +2,13 @@ import os
 
 import numpy as np
 import tensorflow as tf
+from prettyPlot.progressBar import print_progress_bar
 from tensorflow.keras import backend as K
 from tensorflow.keras import layers, losses, optimizers, regularizers
 from tensorflow.keras.callbacks import CSVLogger
 from tensorflow.keras.constraints import max_norm, unit_norm
 from tensorflow.keras.layers import *
 from tensorflow.keras.models import Model
-from prettyPlot.progressBar import print_progress_bar
 
 
 @tf.function
@@ -57,7 +57,6 @@ class myNN(Model):
     def train(
         self, batch_size, epochs, xTrain, yTrain, learningRate, lrScheduler
     ):
-
         self.checkDataShape(xTrain, yTrain)
 
         self.prepareLog()
@@ -88,7 +87,6 @@ class myNN(Model):
                 step,
                 (x_batch_train, y_batch_train),
             ) in enumerate(train_dataset):
-
                 mse = self.train_step(
                     x_batch_train, y_batch_train, dsOptimizer
                 )
@@ -125,7 +123,6 @@ class myNN(Model):
         f.close()
 
     def logTraining(self, epoch, mse, bestLoss):
-
         f = open(self.logLossFolder + "/log.csv", "a+")
         f.write(str(int(epoch)) + ";" + str(mse.numpy()) + "\n")
         f.close()
