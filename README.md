@@ -1,5 +1,4 @@
-# Phase-space sampling of large datasets [![UIPS-CI](https://github.com/NREL/Phase-space-sampling/actions/workflows/ci.yml/badge.svg)](https://github.com/NREL/Phase-space-sampling/actions/workflows/ci.yml)
-
+# Phase-space sampling of large datasets [![UIPS-CI](https://github.com/NREL/Phase-space-sampling/actions/workflows/ci.yml/badge.svg)](https://github.com/NREL/Phase-space-sampling/actions/workflows/ci.yml) [![UIPS-pypi](https://badge.fury.io/py/uips.svg)](https://badge.fury.io/py/uips) 
 ## Installation for NREL HPC users
 1. `module load openmpi/4.1.0/gcc-8.4.0`
 2. `conda activate /projects/mluq/condaEnvs/uips`
@@ -95,6 +94,14 @@ Input file is provided in `inputs/highdim/input11D`
 ## Data efficient ML
 
 The folder `data-efficientML` is NOT necessary for using the phase-space sampling package. It only contains the code necessary to reproduce the results shown in the paper:
+
+## Formatting [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black) [![Imports: isort](https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat&labelColor=ef8336)](https://pycqa.github.io/isort/)
+
+Code formatting and import sorting are done automatically with `black` and `isort`. 
+
+Fix imports and format : `pip install black isort; bash fixFormat.sh`
+
+Spelling is checked but not automatically fixed using `codespell`
 
 ## Reference
 
