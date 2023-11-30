@@ -7,8 +7,8 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 from prettyPlot.parser import parse_input_file
 from prettyPlot.plotting import pretty_labels
 
-import phaseSpaceSampling.utils.parallel as par
-from phaseSpaceSampling import PSS_INPUT_DIR
+import uips.utils.parallel as par
+from uips import PSS_INPUT_DIR
 
 
 def plotScatterProjection(data, fullData, fieldNames, lims):

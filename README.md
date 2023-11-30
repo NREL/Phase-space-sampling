@@ -77,8 +77,8 @@ Suppose one wants to downsample an dataset where $N=10^7$ and $d=2$. First, the 
 Next, the code uses the probability map to define a sampling probability which downselect samples that uniformly span the feature space. The probability map is obtained by training a Neural Spline Flow which implementation was obtained from [Neural Spline Flow repository](https://github.com/bayesiains/nsf). The number of samples in the final dataset can be controlled via the input file.
 
 <p float="left">
-  <img src="documentation/readmeImages/103_phaseSpaceSampling.png" width="350"/> 
-  <img src="documentation/readmeImages/104_phaseSpaceSampling.png" width="350"/>
+  <img src="documentation/readmeImages/103_uips.png" width="350"/> 
+  <img src="documentation/readmeImages/104_uips.png" width="350"/>
 </p>
 
 For comparison, a random sampling gives the following result

@@ -1,7 +1,7 @@
 import os
 
-from phaseSpaceSampling import PSS_INPUT_DIR
-from phaseSpaceSampling.wrapper import downsample_dataset_from_input
+from uips import PSS_INPUT_DIR
+from uips.wrapper import downsample_dataset_from_input
 
 
 def test_nf_input():

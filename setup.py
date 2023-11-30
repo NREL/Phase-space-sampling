@@ -3,13 +3,13 @@ import os
 from setuptools import setup
 
 setup(
-    name="phaseSpaceSampling",
+    name="uips",
     version="0.0.1",
     description="Reduce a large and high-dimensional dataset by downselecting data uniformly in phase space",
     url="https://github.com/NREL/Phase-space-sampling",
     author="Malik Hassanaly",
     license="BSD 3-Clause",
-    package_dir={"phaseSpaceSampling": "phaseSpaceSampling"},
+    package_dir={"uips": "uips"},
     classifiers=[
         "Intended Audience :: Science/Research",
         "License :: OSI Approved :: BSD License",
