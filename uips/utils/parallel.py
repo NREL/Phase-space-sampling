@@ -159,6 +159,11 @@ def allmaxScalar(A):
     return result
 
 
+def allminScalar(A):
+    result = comm.allreduce(A, op=MPI.MIN)
+    return result
+
+
 def bcast(A):
     A = comm.bcast(A, root=0)
     return A

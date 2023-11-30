@@ -4,7 +4,7 @@ from setuptools import setup
 
 setup(
     name="uips",
-    version="0.0.2",
+    version="0.0.3",
     description="Reduce a large and high-dimensional dataset by downselecting data uniformly in phase space",
     url="https://github.com/NREL/Phase-space-sampling",
     author="Malik Hassanaly",
