@@ -14,9 +14,13 @@ from uips.utils.plotFun import *
 from uips.utils.torchutils import get_num_parameters
 
 
-def downsample_dataset_from_input(inpt_file):
+def downsample_dataset_from_input_file(inpt_file):
     inpt_file = find_input(inpt_file)
     inpt = parse_input_file(inpt_file)
+    return downsample_dataset_from_input(inpt)
+
+
+def downsample_dataset_from_input(inpt):
     use_normalizing_flow = inpt["pdf_method"].lower() == "normalizingflow"
     use_bins = inpt["pdf_method"].lower() == "bins"
 
@@ -218,6 +222,7 @@ def downsample_dataset_from_input(inpt_file):
 
     # Advise for best sampling
     if par.irank == par.iroot:
+        best_files = {}
         if np.amax(meanCriterion) > 0:
             print("\n")
             maxCrit = np.argmax(meanCriterion, axis=0)
@@ -226,7 +231,12 @@ def downsample_dataset_from_input(inpt_file):
                 print(
                     f"For sample {nSample} use {inpt['prefixDownsampledData']}_{nSample}_it{maxCrit[iSample]}.npz"
                 )
+                best_files[
+                    nSample
+                ] = f"{inpt['prefixDownsampledData']}_{nSample}_it{maxCrit[iSample]}.npz"
             print("\n")
+
+    return best_files
 
 
 # if par.irank==par.iroot:

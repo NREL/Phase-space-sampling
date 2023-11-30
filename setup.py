@@ -4,7 +4,7 @@ from setuptools import setup
 
 setup(
     name="uips",
-    version="0.0.3",
+    version="0.0.4",
     description="Reduce a large and high-dimensional dataset by downselecting data uniformly in phase space",
     url="https://github.com/NREL/Phase-space-sampling",
     author="Malik Hassanaly",
@@ -16,6 +16,8 @@ setup(
         "Natural Language :: English",
         "Programming Language :: Python :: 3.10",
     ],
+    package_data={"": ["input2D", "input2D_bins"]},
+    include_package_data=True,
     python_requires=">=3.10",
     install_requires=[
         "openmpi",

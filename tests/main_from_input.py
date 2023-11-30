@@ -14,4 +14,4 @@ parser.add_argument(
 )
 args, unknown = parser.parse_known_args()
 
-downsample_dataset_from_input(args.input)
+downsample_dataset_from_input_file(args.input)
