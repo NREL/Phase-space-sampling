@@ -18,7 +18,7 @@ The purpose of the tool is to perform a smart downselection of a large number of
 
 ## Running the example
 
-`bash tests/run2D.sh`: Example of downsampling a 2D combustion dataset. First the downsampling is performed (`mpiexec -np 4 python main.py -i inputs/input2D`). Then the loss function for each flow iteration is plotted (`python postProcess/plotLoss.py -i inputs/input2D`). Finally, the samples are visualized (`python postProcess/visualizeDownSampled_subplots.py -i inputs/input2D`). All figures are saved under the folder `Figures`.
+`bash tutorials/run2D.sh`: Example of downsampling a 2D combustion dataset. First the downsampling is performed (`mpiexec -np 4 python main.py -i inputs/input2D`). Then the loss function for each flow iteration is plotted (`python postProcess/plotLoss.py -i inputs/input2D`). Finally, the samples are visualized (`python postProcess/visualizeDownSampled_subplots.py -i inputs/input2D`). All figures are saved under the folder `Figures`.
 
 ## Parallelization
 
@@ -35,7 +35,7 @@ Running on GPU only accelerate execution by ~30% for the examples provided here.
 
 Parallelization tested with up to 36 cores on Eagle.
 
-Parallelization tested with up to 4 cores on MacOS Catalina v10.15.7.
+Parallelization tested with up to 4 cores on MacOS Monterey v12.7.1.
 
 ## Data 
 
@@ -47,7 +47,7 @@ The dataset to downsample has size $N \times d$ where $N \gg d$. The first dimen
 
 ## Hyperparameters
 
-All hyperparameters can be controlled via an input file (see `tests/run2D.sh`).
+All hyperparameters can be controlled via an input file (see `tutorials/run2D.sh`).
 We recommend fixing the number of flow calculation iteration to 2.
 When increasing the number of dimensions, we recommend adjusting the hyperparameters. A 2-dimensional example (`inputs/input2D`) and an 11-dimensional (`inputs/highdim/input11D`) example are provided to guide the user.
 
