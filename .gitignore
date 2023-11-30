@@ -146,4 +146,4 @@ cython_debug/
 
 # output
 Figures
-TrainingLog
+TrainingLog*
