@@ -44,4 +44,4 @@ jobs:
       - name: Parallel test
         run: |
           cd tests
-          mpiexec -np 2 python main_from_input.py -i ../inputs/input_test
+          mpiexec -np 2 python main_from_input.py -i ../uips/inputs/input_test
