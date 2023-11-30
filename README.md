@@ -18,18 +18,18 @@ The purpose of the tool is to perform a smart downselection of a large number of
 
 ## Running the example
 
-`bash tutorials/run2D.sh`: Example of downsampling a 2D combustion dataset. First the downsampling is performed (`mpiexec -np 4 python main.py -i inputs/input2D`). Then the loss function for each flow iteration is plotted (`python postProcess/plotLoss.py -i inputs/input2D`). Finally, the samples are visualized (`python postProcess/visualizeDownSampled_subplots.py -i inputs/input2D`). All figures are saved under the folder `Figures`.
+`bash tutorials/run2D.sh`: Example of downsampling a 2D combustion dataset. First the downsampling is performed (`mpiexec -np 4 python tests/main_from_input.py -i inputs/input2D`). Then the loss function for each flow iteration is plotted (`python postProcess/plotLoss.py -i inputs/input2D`). Finally, the samples are visualized (`python postProcess/visualizeDownSampled_subplots.py -i inputs/input2D`). All figures are saved under the folder `Figures`.
 
 ## Parallelization
 
-The code is GPU+MPI-parallelized: a) the dataset is loaded and shuffled in parallel b) the probability evaluation (the most expensive step) is done in parallel c) downsampling is done in parallel d) only the training is offloaded to a GPU if available. Memory usage of root processor is higher than other since it is the only one in charge of the normalizing flow training and sampling probability adjustment. To run the code in parallel, `mpiexec -np num_procs python main.py -i inputs/input2D`.
+The code is GPU+MPI-parallelized: a) the dataset is loaded and shuffled in parallel b) the probability evaluation (the most expensive step) is done in parallel c) downsampling is done in parallel d) only the training is offloaded to a GPU if available. Memory usage of root processor is higher than other since it is the only one in charge of the normalizing flow training and sampling probability adjustment. To run the code in parallel, `mpiexec -np num_procs python tests/main_from_input.py -i inputs/input2D`.
 
 In the code, arrays with suffix `_` denote data distributed over the processors.
 
 The computation of nearest neighbor distance is parallelized using the sklearn implementation. It will be accelerated on systems where hyperthreading is enabled (your laptop, but NOT the Eagle HPC)
 
-When using GPU+MPI-parallelism on Eagle, you need to specify the number of MPI tasks (`srun -n 36 python main.py`)
-When using MPI-parallelism alone on Eagle, you do not need to specify the number of MPI tasks (`srun python main.py`)
+When using GPU+MPI-parallelism on Eagle, you need to specify the number of MPI tasks (`srun -n 36 python tests/main_from_input.py`)
+When using MPI-parallelism alone on Eagle, you do not need to specify the number of MPI tasks (`srun python tests/main_from_input.py`)
 
 Running on GPU only accelerate execution by ~30% for the examples provided here. Running with many MPI-tasks linearly decreases the execution time for probability evaluation, as well as memory per core requirements.
 
