@@ -2,10 +2,7 @@
 
 import torch
 
-from uips.utils.typechecks import (
-    is_nonnegative_int,
-    is_positive_int,
-)
+from uips.utils.typechecks import is_nonnegative_int, is_positive_int
 
 
 def tile(x, n):

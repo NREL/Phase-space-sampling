@@ -4,10 +4,7 @@ import torch
 from torch import nn
 from torch.nn import functional as F
 
-from uips.nde.transforms.base import (
-    InverseNotAvailable,
-    Transform,
-)
+from uips.nde.transforms.base import InverseNotAvailable, Transform
 from uips.utils.typechecks import is_positive_int
 
 # class BatchNorm(Transform):
