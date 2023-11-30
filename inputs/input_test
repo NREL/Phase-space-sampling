@@ -57,7 +57,7 @@ printTiming :			True
 ! ~~~~ Data
 ! ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ !
 
-dataFile :			data/combustion2DToDownsampleSmall.npy
+dataFile :			../data/combustion2DToDownsampleSmall.npy
 nDatReduced :			1e5
 preShuffled :			True
 scalerFile :			scaler.npz
