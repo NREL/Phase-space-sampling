@@ -220,9 +220,9 @@ def downsample_dataset_from_input(inpt):
             )
             data_for_pdf_est = downSampledData
 
+    best_files = {}
     # Advise for best sampling
     if par.irank == par.iroot:
-        best_files = {}
         if np.amax(meanCriterion) > 0:
             print("\n")
             maxCrit = np.argmax(meanCriterion, axis=0)

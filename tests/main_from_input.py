@@ -1,6 +1,6 @@
 import argparse
 
-from uips.wrapper import downsample_dataset_from_input
+from uips.wrapper import downsample_dataset_from_input_file
 
 parser = argparse.ArgumentParser(description="Downsampler")
 parser.add_argument(

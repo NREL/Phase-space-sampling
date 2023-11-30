@@ -10,9 +10,17 @@
 2. `conda activate uips`
 3. `pip install .`
 
+Test
+
+```
+bash tutorials/run2D.sh
+```
+
 ## Installation for users
 
 `pip install uips`
+
+Test
 
 ```
 import os
