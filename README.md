@@ -22,7 +22,7 @@ bash tutorials/run2D.sh
 
 Test
 
-```
+```python
 import os
 
 import numpy as np
