@@ -40,6 +40,9 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           python -m pip install .
+          pip install black
+          pip install isort
+          pip install codespell
           pip install pytest 
       - name: Formatting
         run: |
