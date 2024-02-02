@@ -10,7 +10,7 @@ setup(
     package_dir={"uips": "uips"},
     classifiers=[
         "Intended Audience :: Science/Research",
-        "License :: BSD 3 License",
+        "License :: OSI Approved :: BSD License",
         "Natural Language :: English",
         "Programming Language :: Python :: 3.10",
     ],
