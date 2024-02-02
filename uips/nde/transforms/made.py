@@ -1,4 +1,5 @@
 """Implementation of MADE."""
+
 # TODO: should be moved to module nn.
 
 import torch

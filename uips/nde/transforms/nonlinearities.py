@@ -172,9 +172,7 @@ class CauchyCDF(Transform):
 
     def forward(self, inputs, context=None):
         outputs = (1 / np.pi) * torch.atan(inputs) + 0.5
-        logabsdet = sum_except_batch(
-            -np.log(np.pi) - torch.log(1 + inputs**2)
-        )
+        logabsdet = sum_except_batch(-np.log(np.pi) - torch.log(1 + inputs**2))
         return outputs, logabsdet
 
     def inverse(self, inputs, context=None):
