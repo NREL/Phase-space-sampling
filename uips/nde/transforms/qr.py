@@ -36,9 +36,9 @@ class QRLinear(Linear):
 
     def _create_upper(self):
         upper = torch.zeros(self.features, self.features)
-        upper[
-            self.upper_indices[0], self.upper_indices[1]
-        ] = self.upper_entries
+        upper[self.upper_indices[0], self.upper_indices[1]] = (
+            self.upper_entries
+        )
         upper[self.diag_indices[0], self.diag_indices[1]] = torch.exp(
             self.log_upper_diag
         )

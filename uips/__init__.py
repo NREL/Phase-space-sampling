@@ -1,5 +1,8 @@
 """Phase space sampling"""
+
 import os
+
+from uips.version import __version__
 
 UIPS_DIR = os.path.dirname(os.path.realpath(__file__))
 UIPS_INPUT_DIR = os.path.join(UIPS_DIR, "inputs")

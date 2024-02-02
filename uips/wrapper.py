@@ -231,9 +231,9 @@ def downsample_dataset_from_input(inpt):
                 print(
                     f"For sample {nSample} use {inpt['prefixDownsampledData']}_{nSample}_it{maxCrit[iSample]}.npz"
                 )
-                best_files[
-                    nSample
-                ] = f"{inpt['prefixDownsampledData']}_{nSample}_it{maxCrit[iSample]}.npz"
+                best_files[nSample] = (
+                    f"{inpt['prefixDownsampledData']}_{nSample}_it{maxCrit[iSample]}.npz"
+                )
             print("\n")
 
     return best_files

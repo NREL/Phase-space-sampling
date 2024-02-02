@@ -1,4 +1,5 @@
 """Implementation of normalization-based transforms."""
+
 import numpy as np
 import torch
 from torch import nn
