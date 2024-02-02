@@ -1,11 +1,4 @@
-import os
-
 from setuptools import setup
-
-here = os.path.abspath(os.path.dirname(__file__))
-
-with open(os.path.join(here, "requirements.txt")) as f:
-    install_requires = f.readlines()
 
 setup(
     name="uips",
@@ -24,5 +17,11 @@ setup(
     package_data={"": ["input2D", "input2D_bins"]},
     include_package_data=True,
     python_requires=">=3.10",
-    install_requires=install_requires,
+    install_requires=[
+        "torch",
+        "numpy",
+        "mpi4py",
+        "scikit-learn",
+        "prettyPlot>=0.0.25",
+    ],
 )
