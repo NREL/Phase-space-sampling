@@ -8,7 +8,7 @@
 
 1. `conda create --name uips python=3.10`
 2. `conda activate uips`
-3. `pip install .`
+3. `pip install -e .`
 
 Test
 
