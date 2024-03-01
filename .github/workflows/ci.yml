@@ -7,20 +7,50 @@ on:
         - '*.md'
         - 'README*'
         - 'LICENSE'
+        - 'documentation/readmeImages/*'
    pull_request:
      branches: [main]
      paths-ignore:
         - '*.md'
         - 'README*'
         - 'LICENSE'
+        - 'documentation/readmeImages/*'
 
 jobs:
-  UIPS:
+  Lint:
+    name: Lint (${{ matrix.python-version }}, ${{ matrix.os }})
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         python-version: ['3.10']
+        os: ['ubuntu-latest']
+    defaults:
+      run:
+        working-directory: ${{github.workspace}}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: ${{matrix.python-version}}
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install black
+          pip install isort
+          pip install codespell
+      - name: Formatting
+        run: |
+          source .github/linters/formatting.sh
+          format . true
+  Test:
+    name: Test (${{ matrix.python-version }}, ${{ matrix.mpi }}), ${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.10','3.11','3.12']
+        os: ['ubuntu-latest']
         mpi: ['openmpi']
     defaults:
       run:
@@ -40,15 +70,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           python -m pip install .
-          pip install black
-          pip install isort
-          pip install codespell
           pip install pytest 
-      - name: Formatting
-        run: |
-          source .github/linters/formatting.sh
-          format . true
-          codespell
       - name: Pytests
         run: |
           python -m pytest tests -v --disable-warnings

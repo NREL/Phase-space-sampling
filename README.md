@@ -1,4 +1,4 @@
-# Phase-space sampling of large datasets [![UIPS-CI](https://github.com/NREL/Phase-space-sampling/actions/workflows/ci.yml/badge.svg)](https://github.com/NREL/Phase-space-sampling/actions/workflows/ci.yml) [![UIPS-pypi](https://badge.fury.io/py/uips.svg)](https://badge.fury.io/py/uips) 
+# Phase-space sampling of large datasets [![UIPS-CI](https://github.com/NREL/Phase-space-sampling/actions/workflows/ci.yml/badge.svg)](https://github.com/NREL/Phase-space-sampling/actions/workflows/ci.yml) [![UIPS-pyversion](https://img.shields.io/pypi/pyversions/uips.svg)](https://pypi.org/project/uips/) [![UIPS-pypi](https://badge.fury.io/py/uips.svg)](https://badge.fury.io/py/uips) 
 
 ## Installation for NREL HPC users
 1. `module load openmpi/4.1.0/gcc-8.4.0`
@@ -123,22 +123,22 @@ A script is provided to visualize the losses. Execute `python plotLoss.py -i inp
 Suppose one wants to downsample an dataset where $N=10^7$ and $d=2$. First, the code estimates the probability map of the data in order to identify where are located redundant data points. An example dataset (left) and associated probability map (right) are shown below
 
 <p float="left">
-  <img src="documentation/readmeImages/fulldataset.png" width="350"/>
-  <img src="documentation/readmeImages/probabilityMap.png" width="350"/>
+  <img src="https://raw.githubusercontent.com/NREL/Phase-space-sampling/main/documentation/readmeImages/fulldataset.png" width="350"/>
+  <img src="https://raw.githubusercontent.com/NREL/Phase-space-sampling/main/documentation/readmeImages/probabilityMap.png" width="350"/>
 </p>
 
 Next, the code uses the probability map to define a sampling probability which downselect samples that uniformly span the feature space. The probability map is obtained by training a Neural Spline Flow which implementation was obtained from [Neural Spline Flow repository](https://github.com/bayesiains/nsf). The number of samples in the final dataset can be controlled via the input file.
 
 <p float="left">
-  <img src="documentation/readmeImages/103_uips.png" width="350"/> 
-  <img src="documentation/readmeImages/104_uips.png" width="350"/>
+  <img src="https://raw.githubusercontent.com/NREL/Phase-space-sampling/main/documentation/readmeImages/103_uips.png" width="350"/> 
+  <img src="https://raw.githubusercontent.com/NREL/Phase-space-sampling/main/documentation/readmeImages/104_uips.png" width="350"/>
 </p>
 
 For comparison, a random sampling gives the following result
 
 <p float="left">
-  <img src="documentation/readmeImages/103_randomSampling.png" width="350"/> 
-  <img src="documentation/readmeImages/104_randomSampling.png" width="350"/>
+  <img src="https://raw.githubusercontent.com/NREL/Phase-space-sampling/main/documentation/readmeImages/103_randomSampling.png" width="350"/> 
+  <img src="https://raw.githubusercontent.com/NREL/Phase-space-sampling/main/documentation/readmeImages/104_randomSampling.png" width="350"/>
 </p>
 
 ## Example 11D
