@@ -44,7 +44,7 @@ jobs:
           source .github/linters/formatting.sh
           format . true
   Test:
-    name: Test (${{ matrix.python-version }}, ${{ matrix.mpi }}), ${{ matrix.os }})
+    name: Test (${{ matrix.python-version }}, ${{ matrix.mpi }}, ${{ matrix.os }})
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false

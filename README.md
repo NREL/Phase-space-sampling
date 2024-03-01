@@ -8,7 +8,9 @@
 
 1. `conda create --name uips python=3.10`
 2. `conda activate uips`
-3. `pip install .`
+3. `git clone https://github.com/NREL/Phase-space-sampling.git`
+4. `cd Phase-space-sampling`
+5. `pip install -e .`
 
 Test
 
