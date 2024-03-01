@@ -38,17 +38,18 @@ jobs:
           pip install black
           pip install isort
           pip install codespell
-      - name: Formatting and sorting import
+      - name: Formatting
         run: |
           source .github/linters/formatting.sh
           format . true
   Test:
-    name: Test (${{ matrix.python-version }}, ${{ matrix.os }})
+    name: Test (${{ matrix.python-version }}, ${{ matrix.mpi }}), ${{ matrix.os }})
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         python-version: ['3.10', '3.11', '3.12']
+        os: ['ubuntu-latest']
         mpi: ['openmpi']
     defaults:
       run:
