@@ -30,6 +30,8 @@ setup(
         "License :: OSI Approved :: BSD License",
         "Natural Language :: English",
         "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
     ],
     package_data={"": ["input2D", "input2D_bins"]},
     include_package_data=True,
