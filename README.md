@@ -1,6 +1,6 @@
 # Phase-space sampling of large datasets [![UIPS-CI](https://github.com/NREL/Phase-space-sampling/actions/workflows/ci.yml/badge.svg)](https://github.com/NREL/Phase-space-sampling/actions/workflows/ci.yml) [![UIPS-pyversion](https://img.shields.io/pypi/pyversions/uips.svg)](https://pypi.org/project/uips/) [![UIPS-pypi](https://badge.fury.io/py/uips.svg)](https://badge.fury.io/py/uips) 
 
-## Installation for NREL HPC users
+## Installation for NLR HPC users
 1. `module load openmpi/4.1.0/gcc-8.4.0`
 2. `conda activate /projects/mluq/condaEnvs/uips`
 
