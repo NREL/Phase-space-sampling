@@ -19,7 +19,7 @@ inpt["nWorkingData"] = f"{ndat} {ndat}"
 inpt["nEpochs"] = f"5 20"
 inpt["nSamples"] = f"{nSampl}"
 
-best_files = downsample_dataset_from_input(inpt)
+best_files = downsample_dataset_from_input(inpt
 
 
 if par.irank == par.iroot:

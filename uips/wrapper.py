@@ -1,6 +1,9 @@
 import os
 import sys
 import time
+import typing as t
+
+from dataclasses import dataclass
 
 import numpy as np
 import torch
@@ -13,6 +16,10 @@ from uips.utils.fileFinder import find_input
 from uips.utils.plotFun import *
 from uips.utils.torchutils import get_num_parameters
 
+@dataclass
+class DownsampledDataset:
+    data: np.array
+    dataIndices: t.List
 
 def downsample_dataset_from_input_file(inpt_file):
     inpt_file = find_input(inpt_file)
@@ -20,33 +27,36 @@ def downsample_dataset_from_input_file(inpt_file):
     return downsample_dataset_from_input(inpt)
 
 
-def downsample_dataset_from_input(inpt):
-    use_normalizing_flow = inpt["pdf_method"].lower() == "normalizingflow"
-    use_bins = inpt["pdf_method"].lower() == "bins"
+def downsample_dataset_from_input(inpt, dataset):
+    use_normalizing_flow = inpt.pdfMethod.lower() == "normalizingflow"
+    use_bins = inpt.pdfMethod == "bins"
 
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # ~~~~ Parameters to save
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     # List of sample size
-    nSamples = [int(float(n)) for n in inpt["nSamples"].split()]
+    nSamples = inpt.nSamples
     # Data size used to adjust the sampling probability
-    nWorkingDataAdjustment = int(float(inpt["nWorkingDataAdjustment"]))
+    nWorkingDataAdjustment = inpt.nWorkingDataAdjustment
     if nWorkingDataAdjustment < 0:
         use_serial_adjustment = False
     else:
         use_serial_adjustment = True
     # Data size used to learn the data probability
-    nWorkingDatas = [int(float(n)) for n in inpt["nWorkingData"].split()]
+    nWorkingDatas = inpt.stepOptions_as_list("nWorkingData")
+
     if len(nWorkingDatas) == 1:
-        nWorkingDatas = nWorkingDatas * int(inpt["num_pdf_iter"])
+        nWorkingDatas = nWorkingDatas * inpt.num_pdf_iter
+
     for nWorkingData in nWorkingDatas:
         if not nWorkingData in nSamples:
             nSamples += [nWorkingData]
+
     # Do we compute the neighbor distance criterion
-    computeCriterion = inpt["computeDistanceCriterion"] == "True"
+    computeCriterion = inpt.computeDistanceCriterion
     try:
-        nSampleCriterionLimit = int(inpt["nSampleCriterionLimit"])
+        nSampleCriterionLimit = int(inpt.nSampleCriterionLimit)
     except:
         nSampleCriterionLimit = int(1e5)
 
@@ -56,7 +66,7 @@ def downsample_dataset_from_input(inpt):
 
     os.environ["KMP_DUPLICATE_LIB_OK"] = "True"
     use_gpu = (
-        (inpt["use_gpu"] == "True")
+        inpt.use_gpu
         and (torch.cuda.is_available())
         and (par.irank == par.iroot)
     )
@@ -69,14 +79,14 @@ def downsample_dataset_from_input(inpt):
         device = torch.device("cpu")
         torch.set_default_dtype(torch.float32)
     # REPRODUCIBILITY
-    torch.manual_seed(int(inpt["seed"]) + par.irank)
-    np.random.seed(int(inpt["seed"]) + par.irank)
+    torch.manual_seed(inpt.seed + par.irank)
+    np.random.seed(inpt.seed + par.irank)
 
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # ~~~~ Prepare Data and scatter across processors
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    data_to_downsample_, dataInd_, working_data, nFullData = prepareData(inpt)
+    data_to_downsample_, dataInd_, working_data, nFullData = prepareData(inpt, dataset)
 
     dim = data_to_downsample_.shape[1]
 
@@ -96,9 +106,9 @@ def downsample_dataset_from_input(inpt):
                 )
 
     # Prepare arrays used for sanity checks
-    meanCriterion = np.zeros((int(inpt["num_pdf_iter"]), len(nSamples)))
-    stdCriterion = np.zeros((int(inpt["num_pdf_iter"]), len(nSamples)))
-    flow_nll_loss = np.zeros(int(inpt["num_pdf_iter"]))
+    meanCriterion = np.zeros((inpt.num_pdf_iter, len(nSamples)))
+    stdCriterion = np.zeros((inpt.num_pdf_iter, len(nSamples)))
+    flow_nll_loss = np.zeros(inpt.num_pdf_iter)
 
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # ~~~~ Downsample
@@ -106,7 +116,7 @@ def downsample_dataset_from_input(inpt):
 
     data_for_pdf_est = working_data
 
-    for pdf_iter in range(int(inpt["num_pdf_iter"])):
+    for pdf_iter in range(inpt.num_pdf_iter):
         if use_normalizing_flow:
             # Create the normalizing flow
             flow = sampler.createFlow(dim, pdf_iter, inpt)
@@ -157,6 +167,9 @@ def downsample_dataset_from_input(inpt):
 
         par.printRoot(f"TRAIN ITER {pdf_iter}")
 
+        if par.irank == par.iroot:
+            output_datasets = {n:{} for n in nSamples}
+
         for inSample, nSample in enumerate(nSamples):
             # Downsample
             (
@@ -188,7 +201,7 @@ def downsample_dataset_from_input(inpt):
                         f"\t nSample {nSample} mean dist = {mean:.4f}, std dist = {std:.4f}"
                     )
 
-            if pdf_iter == int(inpt["num_pdf_iter"]) - 1:
+            if pdf_iter == inpt.num_pdf_iter - 1:
                 # Last pdf iter : Root proc saves downsampled data, and checks the outcome
                 sampler.checkProcedure(
                     meanCriterion[:, inSample],
@@ -196,13 +209,11 @@ def downsample_dataset_from_input(inpt):
                     randomCriterion[inSample],
                 )
             if par.irank == par.iroot:
-                np.savez(
-                    f"{inpt['prefixDownsampledData']}_{nSample}_it{pdf_iter}.npz",
-                    data=downSampledData,
-                    indices=downSampledIndices,
+                output_datasets[nSample][pdf_iter] = DownsampledDataset(
+                    downSampledData, downSampledIndices
                 )
 
-        if not (pdf_iter == int(inpt["num_pdf_iter"]) - 1):
+        if not (pdf_iter == inpt.num_pdf_iter - 1):
             # Prepare data for the next training iteration
             (
                 downSampledData,
@@ -226,17 +237,17 @@ def downsample_dataset_from_input(inpt):
         if np.amax(meanCriterion) > 0:
             print("\n")
             maxCrit = np.argmax(meanCriterion, axis=0)
-            nSamples_asked = [int(float(n)) for n in inpt["nSamples"].split()]
+            nSamples_asked = inpt.nSamples
             for iSample, nSample in enumerate(nSamples_asked):
                 print(
-                    f"For sample {nSample} use {inpt['prefixDownsampledData']}_{nSample}_it{maxCrit[iSample]}.npz"
+                    f"For sample {nSample} use {inpt.prefixDownsampledData}_{nSample}_it{maxCrit[iSample]}.npz"
                 )
                 best_files[nSample] = (
-                    f"{inpt['prefixDownsampledData']}_{nSample}_it{maxCrit[iSample]}.npz"
+                    f"{inpt.prefixDownsampledData}_{nSample}_it{maxCrit[iSample]}.npz"
                 )
             print("\n")
 
-    return best_files
+    return output_datasets
 
 
 # if par.irank==par.iroot:

@@ -39,7 +39,7 @@ def checkParamListLength(listToCheck, targetLength, name):
 
 
 def makeParamList(strEntry, fun, inpt, pdf_iter):
-    num_pdf_iter = int(inpt["num_pdf_iter"])
+    num_pdf_iter = inpt.num_pdf_iter
     param_list_inpt = [fun(n) for n in inpt[strEntry].split()]
     checkParamListLength(param_list_inpt, num_pdf_iter, strEntry)
     if len(param_list_inpt) == 1 and num_pdf_iter > 1:
@@ -66,7 +66,7 @@ def computeDistanceToClosestNeighbor(data):
 
 
 def rescaleData(np_data, inpt):
-    scaler = np.load(inpt["scalerFile"])
+    scaler = np.load(inpt.scalerFile)
     np_data_rescaled = np_data.copy()
     np_data_rescaled = (np_data_rescaled - scaler["minVal"]) / (
         0.125 * (scaler["maxVal"] - scaler["minVal"])
@@ -79,14 +79,11 @@ def createFlow(dim, pdf_iter, inpt):
     base_transform_type = "spline"
     grad_norm_clip_value = float(5)
 
-    hidden_features_list = makeParamList(
-        "hidden_features", str2int, inpt, pdf_iter
-    )
-    num_blocks_list = makeParamList("num_blocks", str2int, inpt, pdf_iter)
-    num_bins_list = makeParamList("num_bins", str2int, inpt, pdf_iter)
-    num_coupling_layer_list = makeParamList(
-        "nCouplingLayer", str2int, inpt, pdf_iter
-    )
+    hidden_features_list = inpt.stepOptions_as_list("hidden_features")
+
+    num_blocks_list = inpt.stepOptions_as_list("num_blocks")
+    num_bins_list = inpt.stepOptions_as_list("num_bins")
+    num_coupling_layer_list = inpt.stepOptions_as_list("nCouplingLayer")
 
     transform = transforms.CompositeTransform(
         [
@@ -147,16 +144,12 @@ def trainFlow(np_data, flow, pdf_iter, inpt):
     # Timer
     times = time.time()
 
-    learning_rate_list = makeParamList(
-        "learning_rate", str2float, inpt, pdf_iter
-    )
-    num_epochs_list = makeParamList("nEpochs", str2int, inpt, pdf_iter)
-    batch_size_list = makeParamList(
-        "batch_size_train", str2int, inpt, pdf_iter
-    )
+    learning_rate_list = inpt.stepOptions_as_list("learning_rate")
+    num_epochs_list = inpt.stepOptions_as_list("nEpochs")
+    batch_size_list = inpt.stepOptions_as_list("batch_size_train")
 
-    BATCH_SIZE = batch_size_list[pdf_iter]
-    EPOCHS = num_epochs_list[pdf_iter]
+    BATCH_SIZE = batch_size_list[-1]
+    EPOCHS = num_epochs_list[-1]
 
     grad_norm_clip_value = float(5)
     # create optimizer
@@ -168,7 +161,7 @@ def trainFlow(np_data, flow, pdf_iter, inpt):
         return last_loss
 
     os.environ["KMP_DUPLICATE_LIB_OK"] = "True"
-    use_gpu = (inpt["use_gpu"] == "True") and (torch.cuda.is_available())
+    use_gpu = (inpt.use_gpu) and (torch.cuda.is_available())
 
     # Perform training on GPU if possible
     if use_gpu:
@@ -232,7 +225,7 @@ def trainFlow(np_data, flow, pdf_iter, inpt):
 
     # Timer
     timee = time.time()
-    printTiming = inpt["printTiming"] == "True"
+    printTiming = inpt.printTiming
     if printTiming:
         par.printRoot(f"Time Train : {timee - times:.2f}s")
 
@@ -248,7 +241,7 @@ def trainBinPDF(np_data, pdf_iter, inpt):
         return None, None
     # Train
     np_data_rescaled = rescaleData(np_data, inpt)
-    H, edges = np.histogramdd(np_data_rescaled, bins=int(inpt["num_pdf_bins"]))
+    H, edges = np.histogramdd(np_data_rescaled, bins=inpt.num_pdf_bins)
     logProb = np.log(1e-16 + H / np.sum(H))
 
     os.makedirs("TrainingLog", exist_ok=True)
@@ -260,7 +253,7 @@ def trainBinPDF(np_data, pdf_iter, inpt):
 
     # Timer
     timee = time.time()
-    printTiming = inpt["printTiming"] == "True"
+    printTiming = inpt.printTiming
     if printTiming:
         par.printRoot(f"Time Train : {timee - times:.2f}s")
 
@@ -359,7 +352,7 @@ def evalLogProbNF(flow, np_data_to_downsample, pdf_iter, inpt):
     # Evaluation
     flow.eval()
     log_density_np = []
-    BATCH_SIZE = int(float(inpt["batch_size_eval"]))
+    BATCH_SIZE = inpt.batch_size_eval
     to_downsample_loader = makePytorchData(
         np_data_to_downsample, BATCH_SIZE, inpt, shuffle=False
     )
@@ -389,7 +382,7 @@ def evalLogProbNF(flow, np_data_to_downsample, pdf_iter, inpt):
 
     # Timer
     timee = time.time()
-    printTiming = inpt["printTiming"] == "True"
+    printTiming = inpt.printTiming
     if printTiming:
         par.printRoot(f"Time Eval : {par.allmaxScalar(timee - times):.2f}s")
 
@@ -429,7 +422,7 @@ def evalLogProbBIN(np_data_to_downsample, pdf_iter, inpt):
 
     # Timer
     timee = time.time()
-    printTiming = inpt["printTiming"] == "True"
+    printTiming = inpt.printTiming
     if printTiming:
         par.printRoot(f"Time Eval : {par.allmaxScalar(timee - times):.2f}s")
 
@@ -476,13 +469,10 @@ def downSample(
     inpt,
 ):
     # Mode of adjustment of the sampling probability
-    nWorkingDataAdjustment = int(float(inpt["nWorkingDataAdjustment"]))
+    nWorkingDataAdjustment = inpt.nWorkingDataAdjustment
     if nWorkingDataAdjustment < 0:
         use_serial_adjustment = False
-        try:
-            data_freq_adjustment = int(inpt["data_freq_adjustment"])
-        except KeyError:
-            data_freq_adjustment = 1
+        data_freq_adjustment = inpt.data_freq_adjustment
     else:
         use_serial_adjustment = True
 

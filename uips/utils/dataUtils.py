@@ -33,32 +33,33 @@ def checkData(shape, N, d, nWorkingData, nWorkingDataAdjustment, useNF):
 
 
 # @profile
-def prepareData(inpt):
+def prepareData(inpt, dataset = None):
     # Set parameters from input
-    dataFile = find_data(inpt["dataFile"])
-    preShuffled = inpt["preShuffled"] == "True"
-    scalerFile = inpt["scalerFile"]
-    nWorkingDatas = [int(float(n)) for n in inpt["nWorkingData"].split()]
+    if dataset is None:
+        # Load the dataset but don't read it just yet
+        dataFile = find_data(inpt.dataFile)
+        dataset = np.load(dataFile, mmap_mode="r")
+
+    preShuffled = inpt.preShuffled
+    scalerFile = inpt.scalerFile
+    nWorkingDatas = inpt.stepOptions_as_list("nWorkingData")
     if len(nWorkingDatas) == 1:
-        nWorkingDatas = nWorkingDatas * int(inpt["num_pdf_iter"])
-    nWorkingDataAdjustment = int(float(inpt["nWorkingDataAdjustment"]))
+        nWorkingDatas = nWorkingDatas * inpt.num_pdf_iter
+    nWorkingDataAdjustment = int(inpt.nWorkingDataAdjustment)
 
     # Reduce Data
     try:
-        dimList = [int(n) for n in inpt["dimList"].split()]
+        dimList = [int(n) for n in inpt.dimList.split()]
     except:
         dimList = None
     try:
-        nDimReduced = int(float(inpt["nDimReduced"]))
+        nDimReduced = inpt.nDimReduced
     except:
         nDimReduced = -1
     try:
-        nDatReduced = int(float(inpt["nDatReduced"]))
+        nDatReduced = inpt.nDatReduced
     except:
         nDatReduced = -1
-
-    # Load the dataset but don't read it just yet
-    dataset = np.load(dataFile, mmap_mode="r")
 
     # Check that dataset shape make sense
     if nDatReduced > 0:
@@ -72,7 +73,7 @@ def prepareData(inpt):
     else:
         nDim = dataset.shape[1]
     if par.irank == par.iroot:
-        useNF = inpt["pdf_method"].lower() == "normalizingflow"
+        useNF = inpt.pdfMethod.lower() == "normalizingflow"
         checkData(
             dataset.shape,
             nFullData,
